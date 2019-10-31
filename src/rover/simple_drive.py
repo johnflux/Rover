@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-import rover_lib
+from .rover_lib import Motors
 import rospy
 import struct
 
@@ -9,11 +9,11 @@ from std_msgs.msg import Float32
 
 def main():
 	rospy.init_node("simple_drive")
-	motors = rover_lib.Motors()
+	motors = Motors()
 	
 	def on_new_twist(data):
 		print("Twist.  Forward:", data.linear.x, ", Rotate:", data.angular.z)
-		motors.allGentleThrottle(data.linear.x)
+		motors.allGentleThrottle(data.linear.x*-2)
 		
 		# data.linear.x, data.angular.z)
 

@@ -1,4 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+# Yes - python3, not 2
 
 from rover import simple_drive
 

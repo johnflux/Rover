@@ -1,4 +1,11 @@
 #!/usr/bin/env python3 
+
+import sys
+if (sys.version_info < (3, 0)):
+	print("Sorry, python 2 is not supported")
+	exit(1)
+
+
 import time
 from adafruit_motorkit import MotorKit
 import json
@@ -38,7 +45,7 @@ class Motors:
 
 	def reload_conf(self):
 
-		with open('motor_configuration.json') as json_file:
+		with open('/home/ubuntu/catkin_ws/src/rover/src/rover/motor_configuration.json') as json_file:
 			self.conf = json.load(json_file)
 		print(self.conf)
 
@@ -62,8 +69,7 @@ class Motors:
 	def allGentleThrottle(self, throttle):
 		step = 1 if throttle > self.currentAllThrottle else -1
 		for t in range(round(self.currentAllThrottle*10),  round(throttle*10), step):
-			print(t/10.0)
 			self.allThrottle(t/10.0)
-			time.sleep(0.1)
+			time.sleep(0.01)
 		self.allThrottle(throttle)
 	
