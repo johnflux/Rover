@@ -9,11 +9,6 @@ from std_msgs.msg import Float32
 def main():
 	rospy.init_node("simple_drive")
 	
-	baudrate = rospy.get_param('~baudrate', 9600)
-	Serial = serial.Serial(baudrate=baudrate)
-	Serial.port = rospy.get_param("~serial_dev")
-	Serial.open()
-	
 	def on_new_twist(data):
 		print("Twist command!", data)
 		# data.linear.x, data.angular.z)
