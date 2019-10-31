@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import rover_lib
 import rospy
 import struct
 
@@ -8,9 +9,12 @@ from std_msgs.msg import Float32
 
 def main():
 	rospy.init_node("simple_drive")
+	motors = rover_lib.Motors()
 	
 	def on_new_twist(data):
-		print("Twist command!", data)
+		print("Twist.  Forward:", data.linear.x, ", Rotate:", data.angular.z)
+		motors.allGentleThrottle(data.linear.x)
+		
 		# data.linear.x, data.angular.z)
 
 	def on_new_servo(data):
