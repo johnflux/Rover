@@ -8,6 +8,8 @@ import json
 # And for the Motor:
 # https://github.com/adafruit/Adafruit_CircuitPython_Motor/blob/master/adafruit_motor/motor.py 
 
+#TODO: Use  rospy.get_param('somekey', default)
+
 class Motor:
 	def __init__(self):
 		self.dcmotor = None
