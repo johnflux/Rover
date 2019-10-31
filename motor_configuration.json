@@ -1,0 +1,38 @@
+{
+	"left_controller_board": {
+		"i2c_address": "0x60"
+	},
+	"right_controller_board": {
+		"i2c_address": "0x61"
+	},
+	"left_front": {
+		"left_controller": true,
+		"controller_motor_number": 1,
+		"wired_backwards": false
+	},
+	"left_middle": {
+		"left_controller": true,
+		"controller_motor_number": 2,
+		"wired_backwards": true
+	},
+	"left_back": {
+		"left_controller": true,
+		"controller_motor_number": 4,
+		"wired_backwards": false
+	},
+	"right_front": {
+		"left_controller": false,
+		"controller_motor_number": 2,
+		"wired_backwards": false
+	},
+	"right_middle": {
+		"left_controller": false,
+		"controller_motor_number": 1,
+		"wired_backwards": false
+	},
+	"right_back": {
+		"left_controller": false,
+		"controller_motor_number": 4,
+		"wired_backwards": true
+	}
+}
