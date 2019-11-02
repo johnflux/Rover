@@ -8,6 +8,7 @@ if (sys.version_info < (3, 0)):
 
 import time
 from adafruit_motorkit import MotorKit
+from adafruit_servokit import ServoKit
 import json
 
 # See MotorKit code for full api of MotorKit (but there's not much to it:
@@ -27,11 +28,15 @@ class Motor:
 		return self.dcmotor.throttle
 
 	@throttle.setter
-	def throttle(self, value):
-		print("Setting throttle to ", value)
-		if self.wired_backwards:
-			value = -value
-		self.dcmotor.throttle = value
+	def throttle(self, throttle):
+		if throttle != None and throttle != 0:
+			if throttle > 0:
+				throttle = throttle / 2 + 0.5
+			else:
+				throttle = throttle / 2 - 0.5
+		if self.wired_backwards and throttle != None:
+			throttle = -throttle
+		self.dcmotor.throttle = throttle
 
 class Motors:
 	def __init__(self):
@@ -72,4 +77,37 @@ class Motors:
 			self.allThrottle(t/10.0)
 			time.sleep(0.01)
 		self.allThrottle(throttle)
+
+	def twistThrottle(self, throttle):
+		print("Twist throttle to", throttle)
+		self.left_front.throttle = throttle
+		self.left_middle.throttle = throttle/2
+		self.left_back.throttle = throttle
+		self.right_front.throttle = -throttle
+		self.right_middle.throttle = -throttle/2
+		self.right_back.throttle = -throttle
+
+class Servos():
+	def __init__(self):
+		self.servo = ServoKit(channels=16)
+	def allOff(self):
+		self.servo.servo[15].angle=None
+		self.servo.servo[14].angle=None
+		self.servo.servo[0].angle=None
+		self.servo.servo[1].angle=None
+
+	def setTwist(self, angle):
+		self.servo.servo[15].angle=130+angle
+		self.servo.servo[14].angle=110+angle
+		self.servo.servo[0].angle=50+angle
+		self.servo.servo[1].angle=100+angle
+	def twist(self):
+		self.servo.servo[15].angle=130 - 30
+		self.servo.servo[14].angle=110 + 30
+		self.servo.servo[0].angle=50 - 30
+		self.servo.servo[1].angle=100 + 30
+
+
+
+
 	

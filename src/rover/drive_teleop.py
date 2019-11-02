@@ -10,7 +10,7 @@ from actionlib_msgs.msg import GoalID
 
 class DriveTeleop:
     def __init__(self):
-        self.speed_setting = 2 # default to medium speed
+        self.speed_setting = 1 # default to full speed
         self.servo_pan_speed = rospy.get_param('~servo_pan_speed', 5) # degrees of change per button press
         self.servo_pan_max = rospy.get_param('~servo_pan_max', 160) # max angle of servo rotation
         self.servo_pan_min = rospy.get_param('~servo_pan_min', 0) # min angle of servo rotation
@@ -25,18 +25,12 @@ class DriveTeleop:
         # Set speed ratio using d-pad
         if data.axes[7] == 1: # full speed (d-pad up)
             self.speed_setting = 1
-        if data.axes[6] != 0: # medium speed (d-pad left or right)
-            self.speed_setting = 2
         if data.axes[7] == -1: # low speed (d-pad down)
-            self.speed_setting = 3
+            self.speed_setting = 2
 
         # Drive sticks
-        left_speed = -data.axes[1] / self.speed_setting # left stick
-        right_speed = -data.axes[4] / self.speed_setting # right stick
-
-        # Convert skid steering speeds to twist speeds
-        linear_vel  = (left_speed + right_speed) / 2.0 # (m/s)
-        angular_vel  = (right_speed - left_speed) / 2.0 # (rad/s)
+        linear_vel = -data.axes[4] / self.speed_setting # right stick forward/back
+        angular_vel = -data.axes[3] # right stick left/right (rad/s)
 
         # Publish Twist
         twist = Twist()
