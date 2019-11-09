@@ -1,0 +1,13 @@
+# Copy to /lib/systemd/system
+[Unit]
+Description=Roslaunch the drive modules
+After=multi-user.target
+
+[Service]
+ExecStart=bash -c "source /home/ubuntu/catkin_ws/devel/setup.bash && roslaunch rover drive.launch"
+KillMode=process
+User=ubuntu
+
+[Install]
+WantedBy=default.target
+
