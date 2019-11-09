@@ -4,5 +4,5 @@
   <!-- Multiplex Motor Commands Node -->
   <include file="$(find rover)/launch/cmd_vel_mux.launch"/>
   <!-- Simple Drive Node -->
-  <include file="$(find rover)/launch/rover.launch"/>
+  <include file="$(find rover)/launch/simple_drive.launch"/>
 </launch>
