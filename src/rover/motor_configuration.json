@@ -8,31 +8,44 @@
 	"left_front": {
 		"left_controller": true,
 		"controller_motor_number": 1,
-		"wired_backwards": false
+		"wired_backwards": false,
+		"arm": false
 	},
 	"left_middle": {
 		"left_controller": true,
 		"controller_motor_number": 2,
-		"wired_backwards": true
+		"wired_backwards": true,
+		"arm": false
 	},
 	"left_back": {
 		"left_controller": true,
 		"controller_motor_number": 4,
-		"wired_backwards": false
+		"wired_backwards": false,
+		"arm": false
 	},
 	"right_front": {
 		"left_controller": false,
 		"controller_motor_number": 2,
-		"wired_backwards": false
+		"wired_backwards": false,
+		"arm": false
 	},
 	"right_middle": {
 		"left_controller": false,
 		"controller_motor_number": 1,
-		"wired_backwards": false
+		"wired_backwards": false,
+		"arm": false
 	},
 	"right_back": {
 		"left_controller": false,
 		"controller_motor_number": 4,
-		"wired_backwards": true
+		"wired_backwards": true,
+		"arm": false
+
+	},
+	"arm_middle": {
+		"left_controller": true,
+		"controller_motor_number": 3,
+		"wired_backwards": false,
+		"arm": true
 	}
 }

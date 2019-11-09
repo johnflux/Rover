@@ -22,6 +22,7 @@ class Motor:
 	def __init__(self):
 		self.dcmotor = None
 		self.wired_backwards = False
+		self.arm = False
 
 	@property
 	def throttle(self):
@@ -41,7 +42,7 @@ class Motor:
 class Motors:
 	def __init__(self):
 		# We have the equivalent of self.left_front = Motor() etc
-		self.motor_names = ['left_front', 'left_middle', 'left_back', 'right_front', 'right_middle', 'right_back']
+		self.motor_names = ['left_front', 'left_middle', 'left_back', 'right_front', 'right_middle', 'right_back', 'arm_middle']
 		for motor_name in self.motor_names:
 			setattr(self, motor_name, Motor())
 
@@ -63,13 +64,19 @@ class Motors:
 			kit = self.kitLeft if motor_conf['left_controller'] else self.kitRight
 			motor.dcmotor = getattr(kit, 'motor' + str(motor_conf['controller_motor_number']))
 			motor.wired_backwards = motor_conf['wired_backwards']
+			motor.arn = motor_conf['arm']
 			print("Configured", motor_name, "on", motor_conf['controller_motor_number'], 'and it', 'is' if motor_conf['wired_backwards'] else 'is not', 'wired backwards')
 
 	# Only real use is to set throttle to 0 for all, or for debugging
 	def allThrottle(self, throttle):
 		self.currentAllThrottle = throttle
 		for motor_name in self.motor_names:
-			getattr(self, motor_name).throttle = throttle
+			motor = getattr(self, motor_name)
+			if not motor.arm:
+				motor.throttle = throttle
+
+	def armThrottle(self, throttle):
+			self.arm_middle.throttle = throttle
 
 	def allGentleThrottle(self, throttle):
 		step = 1 if throttle > self.currentAllThrottle else -1
@@ -90,22 +97,27 @@ class Motors:
 class Servos():
 	def __init__(self):
 		self.servo = ServoKit(channels=16)
+		self.right_front = self.servo.servo[15]
+		self.right_back = self.servo.servo[14]
+		self.left_front = self.servo.servo[1]
+		self.left_back = self.servo.servo[0]
 	def allOff(self):
-		self.servo.servo[15].angle=None
-		self.servo.servo[14].angle=None
-		self.servo.servo[0].angle=None
-		self.servo.servo[1].angle=None
+		self.right_front.angle=None
+		self.right_back.angle=None
+		self.left_front.angle=None
+		self.left_back.angle=None
+		pass
 
 	def setTwist(self, angle):
-		self.servo.servo[15].angle=130+angle
-		self.servo.servo[14].angle=110+angle
-		self.servo.servo[0].angle=50+angle
-		self.servo.servo[1].angle=100+angle
+		self.right_front.angle=30+angle
+		self.right_back.angle=110+angle
+		self.left_front.angle=90+angle
+		self.left_back.angle=130-angle
 	def twist(self):
-		self.servo.servo[15].angle=130 - 30
-		self.servo.servo[14].angle=110 + 30
-		self.servo.servo[0].angle=50 - 30
-		self.servo.servo[1].angle=100 + 30
+		self.right_front.angle=30 - 30
+		self.right_back.angle=110 + 40
+		self.left_front.angle=90 + 35
+		self.left_back.angle=130 - 40
 
 
 

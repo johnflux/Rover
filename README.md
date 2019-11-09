@@ -1,6 +1,9 @@
 ![controller](controller.png)
 ##
 
+This folder should be inside ~/catkin_ws/src
+e.g. ~/catkin_ws/src/rover/
+
 1. Launch ROS nodes:
 
 ```

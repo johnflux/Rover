@@ -16,7 +16,8 @@ def main():
 	def on_new_twist(data):
 		try:
 			print("Twist.  Forward:", data.linear.x, ", Rotate:", round(data.angular.z * 45))
-			motors.allGentleThrottle(data.linear.x*-1)
+			motors.allGentleThrottle(data.linear.x)
+			motors.armThrottle(data.linear.y)
 			if data.angular.z == 0 and data.linear.x == 0:
 				print("Servos off")
 				servos.allOff()

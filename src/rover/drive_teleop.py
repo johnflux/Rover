@@ -29,12 +29,16 @@ class DriveTeleop:
             self.speed_setting = 2
 
         # Drive sticks
-        linear_vel = -data.axes[4] / self.speed_setting # right stick forward/back
+        linear_vel = data.axes[4] / self.speed_setting # right stick forward/back
         angular_vel = -data.axes[3] # right stick left/right (rad/s)
+
+        arm_leftright = data.axes[0] # horiz
+        arm_updown = data.axes[1] # vert
 
         # Publish Twist
         twist = Twist()
         twist.linear.x = linear_vel
+        twist.linear.y = arm_updown
         twist.angular.z = angular_vel
         self.cmd_vel_pub.publish(twist)
 
