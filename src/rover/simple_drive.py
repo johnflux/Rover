@@ -12,12 +12,23 @@ def main():
 	rospy.init_node("simple_drive")
 	motors = Motors()
 	servos = Servos()
+	rate = rospy.Rate(10) # 10hz
 	
 	def on_new_twist(data):
 		try:
 			print("Twist.  Forward:", data.linear.x, ", Rotate:", round(data.angular.z * 45))
+			print("arm updown:", data.linear.y, ", leftright:", data.linear.z)
 			motors.allGentleThrottle(data.linear.x)
-			motors.armThrottle(data.linear.y)
+			#motors.armThrottle(data.linear.y)
+			if data.linear.y == -2:
+				servos.moveArmUp(None)
+			else:
+				servos.moveArmUp(-data.linear.y*10)
+			if data.linear.z == -2:
+				servos.moveArmLeft(None)
+			else:
+				servos.moveArmLeft(data.linear.z*10)
+
 			if data.angular.z == 0 and data.linear.x == 0:
 				print("Servos off")
 				servos.allOff()
@@ -40,4 +51,6 @@ def main():
 	subscriber_twist = rospy.Subscriber("cmd_vel", Twist, on_new_twist, queue_size=10)
 	subscriber_servo = rospy.Subscriber("servo_pos", Float32, on_new_servo, queue_size=10)
 
-	rospy.spin()
+	while not rospy.is_shutdown():
+		servos.update()
+		rate.sleep()

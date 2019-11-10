@@ -5,7 +5,7 @@
     <arg name="joy_dev" default="/dev/input/js0"/>
 
     <!-- Joy Node -->
-    <node pkg="joy" type="joy_node" name="joy_drive" clear_params="true" output="screen" respawn="true" >
+    <node pkg="joy" type="joy_node" name="joy_drive" clear_params="true" output="screen" respawn="false" >
       <param name="joy_dev" value="$(arg joy_dev)" />
       <param name="deadzone" value="0.12" />
       <!-- OUTPUT TOPICS -->
@@ -13,7 +13,7 @@
     </node>
 
     <!-- Teleoperation Node -->
-    <node pkg="rover" type="drive_teleop" name="drive_teleop" clear_params="true" output="screen" respawn="true">
+    <node pkg="rover" type="drive_teleop" name="drive_teleop" clear_params="true" output="screen" respawn="false">
       <param name="servo_pan_speed" type="int" value="5"/>
       <param name="servo_pan_max" type="int" value="160"/>
       <param name="servo_pan_min" type="int" value="0"/>

@@ -35,11 +35,18 @@ class DriveTeleop:
         arm_leftright = data.axes[0] # horiz
         arm_updown = data.axes[1] # vert
 
+
+        if data.buttons[3]: # Y button
+            arm_updown = -2
+            arm_leftright = -2
+
         # Publish Twist
         twist = Twist()
         twist.linear.x = linear_vel
         twist.linear.y = arm_updown
+        twist.linear.z = arm_leftright
         twist.angular.z = angular_vel
+
         self.cmd_vel_pub.publish(twist)
 
         # Servo servo panning control

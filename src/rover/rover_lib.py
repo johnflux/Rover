@@ -101,11 +101,24 @@ class Servos():
 		self.right_back = self.servo.servo[14]
 		self.left_front = self.servo.servo[1]
 		self.left_back = self.servo.servo[0]
+		self.arm_updown = self.servo.servo[10]
+		self.arm_leftright = self.servo.servo[11]
+
+		self.max_arm_leftright = 180
+		self.min_arm_leftright = 60
+		self.max_arm_updown = 160
+		self.min_arm_updown = 85
+
+		self.rate_arm_updown = None
+		self.rate_arm_leftright = None
+
 	def allOff(self):
 		self.right_front.angle=None
 		self.right_back.angle=None
 		self.left_front.angle=None
 		self.left_back.angle=None
+		#self.arm_updown.angle=None
+		#self.arm_leftright.angle=None
 		pass
 
 	def setTwist(self, angle):
@@ -119,7 +132,42 @@ class Servos():
 		self.left_front.angle=90 + 35
 		self.left_back.angle=130 - 40
 
-
-
-
+	def armAllTheWayUp(self):
+		self.arm_updown.angle = self.min_arm_updown
+	def armStraight(self):
+		self.arm_updown.angle = 140
+	def armAllTheWayDown(self):
+		self.arm_updown.angle = self.max_arm_updown
+	def armHorizontalCenter(self):
+		self.arm_leftright.angle = self.min_arm_leftright
+	def armReset(self):
+		self.armAllTheWayUp()
+		self.arm_leftright.angle = self.max_arm_leftright
 	
+	def moveArmUp(self, amount):
+		if amount == None:
+			self.arm_updown.angle = None
+			self.rate_arm_updown = None
+		elif self.arm_updown.angle != None:
+			self.rate_arm_updown = amount
+		else:
+			self.rate_arm_updown = 0
+			self.armStraight()
+
+	def moveArmLeft(self,amount):
+		if amount == None:
+			self.arm_leftright.angle = None
+			self.rate_arm_leftright = None
+		elif self.arm_leftright.angle != None:
+			self.rate_arm_leftright = amount
+		else:
+			self.rate_arm_leftright = 0
+			self.armHorizontalCenter()
+
+	def update(self):
+		if self.rate_arm_leftright != 0 and self.rate_arm_leftright != None and self.arm_leftright.angle != None:
+			self.arm_leftright.angle = min(max(self.arm_leftright.angle + self.rate_arm_leftright, self.min_arm_leftright),self.max_arm_leftright)
+			#print("arm leftright is now: ", self.arm_leftright.angle)
+		if self.rate_arm_updown != 0 and self.rate_arm_updown != None and self.arm_updown.angle != None:
+			self.arm_updown.angle = min(max(self.arm_updown.angle + self.rate_arm_updown, self.min_arm_updown),self.max_arm_updown)
+			#print("arm updown is now: ", self.arm_updown.angle)
