@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <!-- 
+    I mirrored these two scripts locally, because I don't entirely trust these files to always be available.  
+    
+    <script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+    <script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
+-->
+
+  <script type="text/javascript" src="libs/eventemitter2.min.js"></script>
+  <script type="text/javascript" src="libs/roslib.min.js"></script>
+
+  <script type="text/javascript" type="text/javascript">
+    var ros = new ROSLIB.Ros({
+      url: 'ws://' + window.location.hostname + ':9090'
+    });
+
+    ros.on('connection', function () {
+      console.log('Connected to websocket server.');
+    });
+
+    ros.on('error', function (error) {
+      console.log('Error connecting to websocket server: ', error);
+    });
+
+    ros.on('close', function () {
+      console.log('Connection to websocket server closed.');
+    });
+
+    /*new ROSLIB.Topic({
+      ros: ros,
+      name: '/cmd_vel',
+      messageType: 'geometry_msgs/Twist'
+    }).subscribe(function (message) {
+      console.log('Received message on /cmd_vel:', message);
+    });*/
+
+    new ROSLIB.Topic({
+      ros: ros,
+      name: '/joy',
+      messageType: 'sensor_msgs/Joy'
+    }).subscribe(function (message) {
+      console.log('Received message on /joy:', message);
+    });
+
+  </script>
+</head>
+
+<body>
+  <h1>Rover, by Flux Programming Ltd</h1>
+  <p>Check the Web Console for output</p>
+</body>
+
+</html>

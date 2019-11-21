@@ -47,5 +47,11 @@
 		"controller_motor_number": 3,
 		"wired_backwards": false,
 		"arm": true
+	},
+	"arm_bottom": {
+		"left_controller": false,
+		"controller_motor_number": 3,
+		"wired_backwards": false,
+		"arm": true
 	}
 }

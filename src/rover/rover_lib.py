@@ -42,7 +42,7 @@ class Motor:
 class Motors:
 	def __init__(self):
 		# We have the equivalent of self.left_front = Motor() etc
-		self.motor_names = ['left_front', 'left_middle', 'left_back', 'right_front', 'right_middle', 'right_back', 'arm_middle']
+		self.motor_names = ['left_front', 'left_middle', 'left_back', 'right_front', 'right_middle', 'right_back', 'arm_middle', 'arm_bottom']
 		for motor_name in self.motor_names:
 			setattr(self, motor_name, Motor())
 
@@ -74,9 +74,17 @@ class Motors:
 			motor = getattr(self, motor_name)
 			if not motor.arm:
 				motor.throttle = throttle
+	def allOff(self, throttle):
+		self.currentAllThrottle = None
+		for motor_name in self.motor_names:
+			motor = getattr(self, motor_name)
+			motor.throttle = None
 
-	def armThrottle(self, throttle):
+	def armMiddleThrottle(self, throttle):
 			self.arm_middle.throttle = throttle
+
+	def armBottomThrottle(self, throttle):
+			self.arm_bottom.throttle = throttle			
 
 	def allGentleThrottle(self, throttle):
 		step = 1 if throttle > self.currentAllThrottle else -1
@@ -97,12 +105,12 @@ class Motors:
 class Servos():
 	def __init__(self):
 		self.servo = ServoKit(channels=16)
-		self.right_front = self.servo.servo[15]
-		self.right_back = self.servo.servo[14]
+		self.right_front = self.servo.servo[3]
+		self.right_back = self.servo.servo[2]
 		self.left_front = self.servo.servo[1]
 		self.left_back = self.servo.servo[0]
-		self.arm_updown = self.servo.servo[10]
-		self.arm_leftright = self.servo.servo[11]
+		self.arm_updown = self.servo.servo[4]
+		self.arm_leftright = self.servo.servo[5]
 
 		self.max_arm_leftright = 180
 		self.min_arm_leftright = 60
@@ -117,9 +125,11 @@ class Servos():
 		self.right_back.angle=None
 		self.left_front.angle=None
 		self.left_back.angle=None
-		#self.arm_updown.angle=None
-		#self.arm_leftright.angle=None
-		pass
+	def armOff(self):
+		self.arm_updown.angle=None
+		self.arm_leftright.angle=None
+		self.rate_arm_updown = None
+		self.rate_arm_leftright = None
 
 	def setTwist(self, angle):
 		self.right_front.angle=30+angle
@@ -143,6 +153,8 @@ class Servos():
 	def armReset(self):
 		self.armAllTheWayUp()
 		self.arm_leftright.angle = self.max_arm_leftright
+		self.rate_arm_updown = None
+		self.rate_arm_leftright = None
 	
 	def moveArmUp(self, amount):
 		if amount == None:
