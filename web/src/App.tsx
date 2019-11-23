@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import Joystick from './Joystick';
 import './libs/eventemitter2.min.js';
+import ROSLIB from './libs/roslib.min.js';
 
 type AppState = {
   rosmon: any
