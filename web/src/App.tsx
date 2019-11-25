@@ -3,6 +3,8 @@ import './App.css';
 import Joystick from './Joystick';
 import ROSLIB from 'roslib';
 import WebsocketUrlInput from './WebsocketUrlInput/WebsocketUrlInput';
+import RosNodeHealth from './RosNodeHealth/RosNodeHealth';
+import { Paper } from '@material-ui/core';
 
 
 type AppState = {
@@ -80,16 +82,15 @@ class App extends React.Component<{},AppState> {
   render() {
     return (
       <div className="App">
+        { this.state.rosmon && this.state.rosmon.nodes &&
+          <RosNodeHealth nodes={this.state.rosmon.nodes} />
+        }
         <WebsocketUrlInput
             hostname={this.state.hostname}
             websocketStatus={this.state.websocketStatus}
             onSubmit={this.onHostnameSubmit}
             lastMessageTimestamp={this.state.rosmon.header ? this.state.rosmon.header.stamp.secs : 0}
             />
-        
-        <pre>
-          {JSON.stringify(this.state.rosmon, null, 2)}
-        </pre>
         <Joystick />
       </div>
     );
