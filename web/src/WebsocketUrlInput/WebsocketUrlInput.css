@@ -1,0 +1,16 @@
+.WebsocketUrlInput .Disconnected {
+  background: #FDDFDF;
+}
+
+.WebsocketUrlInput .Connected {
+  background: #DEFDE0;
+}
+
+.WebsocketUrlInput .Changed {
+  background: #FCF7DE;
+}
+
+.WebsocketUrlInput .timestamp {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: small;
+}

@@ -1,11 +1,14 @@
 import React from 'react';
 import './App.css';
 import Joystick from './Joystick';
-import './libs/eventemitter2.min.js';
-import ROSLIB from './libs/roslib.min.js';
+import ROSLIB from 'roslib';
+import WebsocketUrlInput from './WebsocketUrlInput/WebsocketUrlInput';
+
 
 type AppState = {
-  rosmon: any
+  [rosmon: string]: any,
+  hostname: string,
+  websocketStatus: "Disconnected" | "Connected",
 }
 
 class App extends React.Component<{},AppState> {
@@ -13,23 +16,28 @@ class App extends React.Component<{},AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      rosmon: {}
+      rosmon: {},
+      hostname: localStorage.getItem('websocket_url') || ('ws://' + window.location.hostname + ':9090'),
+      websocketStatus: "Disconnected",
     }
 
     this.ros = new ROSLIB.Ros({
-      url: 'ws://' + window.location.hostname + ':9090'
+      url: this.state.hostname
     });
 
-    this.ros.on('connection', function () {
+    this.ros.on('connection', () => {
       console.log('Connected to websocket server.');
+      this.setState({websocketStatus: "Connected"});
     });
 
-    this.ros.on('error', function (error) {
+    this.ros.on('error', (error: string) => {
       console.log('Error connecting to websocket server: ', error);
     });
 
-    this.ros.on('close', function () {
+    this.ros.on('close', () => {
       console.log('Connection to websocket server closed.');
+      this.setState({websocketStatus: "Disconnected"});
+      this.ros.connect(this.state.hostname);
     });
 
     /*new ROSLIB.Topic({
@@ -52,20 +60,36 @@ class App extends React.Component<{},AppState> {
       ros: this.ros,
       name: '/rosmon/state',
       messageType: 'rosmon_msgs/State'
-    }).subscribe(function (message) {
-      console.log('Received message on /rosmon/state:', message);
+    }).subscribe((message) => {
+      //console.log('Received message on /rosmon/state:', message);
+      this.setState({rosmon: message});
     });
+
+  }
+
+  connectToWebsocket() {
+    this.ros.close();
+    this.setState({websocketStatus: "Disconnected"});
+  }
+
+  onHostnameSubmit = (newHostname: string) => {
+    localStorage.setItem('websocket_url', newHostname);
+    this.setState({ hostname: newHostname}, () => this.connectToWebsocket());
   }
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <p>
-            Rover - Flux Programming Ltd
-          </p>
-        </header>
-        Hellosadf
+        <WebsocketUrlInput
+            hostname={this.state.hostname}
+            websocketStatus={this.state.websocketStatus}
+            onSubmit={this.onHostnameSubmit}
+            lastMessageTimestamp={this.state.rosmon.header ? this.state.rosmon.header.stamp.secs : 0}
+            />
+        
+        <pre>
+          {JSON.stringify(this.state.rosmon, null, 2)}
+        </pre>
         <Joystick />
       </div>
     );
