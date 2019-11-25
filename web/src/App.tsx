@@ -5,6 +5,7 @@ import ROSLIB from 'roslib';
 import WebsocketUrlInput from './WebsocketUrlInput/WebsocketUrlInput';
 import RosNodeHealth from './RosNodeHealth/RosNodeHealth';
 import { RosMon, SensorMsgsJoy } from './ROS_message_types';
+import WebGamePad from './WebGamePad';
 
 type AppState = {
   rosmon?: RosMon,
@@ -15,6 +16,8 @@ type AppState = {
 
 class App extends React.Component<{},AppState> {
   ros: any;
+  gamepad: WebGamePad;
+  sensorMsgTopic: ROSLIB.Topic;
   constructor(props: {}) {
     super(props);
     this.state = {
@@ -23,6 +26,8 @@ class App extends React.Component<{},AppState> {
       hostname: localStorage.getItem('websocket_url') || ('ws://' + window.location.hostname + ':9090'),
       websocketStatus: "Disconnected",
     }
+    this.gamepad = new WebGamePad();
+    this.gamepad.onJoystickMessage = (msg: SensorMsgsJoy) => this.handleJoystickMessage(msg);
 
     this.ros = new ROSLIB.Ros({
       url: this.state.hostname
@@ -51,11 +56,12 @@ class App extends React.Component<{},AppState> {
       console.log('Received message on /cmd_vel:', message);
     });*/
 
-    new ROSLIB.Topic({
+    this.sensorMsgTopic = new ROSLIB.Topic({
       ros: this.ros,
       name: '/joy',
       messageType: 'sensor_msgs/Joy'
-    }).subscribe((message) => {
+    });
+    this.sensorMsgTopic.subscribe((message) => {
       console.log('Received message on /joy:', message);
       this.setState({sensor_msgs_joy: message as SensorMsgsJoy});
     });
@@ -68,7 +74,11 @@ class App extends React.Component<{},AppState> {
       //console.log('Received message on /rosmon/state:', message);
       this.setState({rosmon: message as RosMon});
     });
+  }
 
+  handleJoystickMessage(msg: SensorMsgsJoy) {
+    //this.setState({sensor_msgs_joy: msg});
+    this.sensorMsgTopic.publish(new ROSLIB.Message(msg));
   }
 
   connectToWebsocket() {

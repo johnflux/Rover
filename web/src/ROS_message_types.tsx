@@ -18,12 +18,12 @@ export type RosMon = {
 }
 
 export type SensorMsgsJoy = {
-  "header": {
+  "header"?: {
     "stamp": {
       "secs": number,
       "nsecs": number
     },
-    "frame_id": "",
+    "frame_id": string,
     "seq": number
   },
   "buttons": [
