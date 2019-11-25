@@ -4,11 +4,11 @@ import Joystick from './Joystick';
 import ROSLIB from 'roslib';
 import WebsocketUrlInput from './WebsocketUrlInput/WebsocketUrlInput';
 import RosNodeHealth from './RosNodeHealth/RosNodeHealth';
-import { Paper } from '@material-ui/core';
-
+import { RosMon, SensorMsgsJoy } from './ROS_message_types';
 
 type AppState = {
-  [rosmon: string]: any,
+  rosmon?: RosMon,
+  sensor_msgs_joy?: SensorMsgsJoy,
   hostname: string,
   websocketStatus: "Disconnected" | "Connected",
 }
@@ -18,7 +18,8 @@ class App extends React.Component<{},AppState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      rosmon: {},
+      rosmon: undefined,
+      sensor_msgs_joy: undefined,
       hostname: localStorage.getItem('websocket_url') || ('ws://' + window.location.hostname + ':9090'),
       websocketStatus: "Disconnected",
     }
@@ -54,8 +55,9 @@ class App extends React.Component<{},AppState> {
       ros: this.ros,
       name: '/joy',
       messageType: 'sensor_msgs/Joy'
-    }).subscribe(function (message) {
+    }).subscribe((message) => {
       console.log('Received message on /joy:', message);
+      this.setState({sensor_msgs_joy: message as SensorMsgsJoy});
     });
 
     new ROSLIB.Topic({
@@ -64,7 +66,7 @@ class App extends React.Component<{},AppState> {
       messageType: 'rosmon_msgs/State'
     }).subscribe((message) => {
       //console.log('Received message on /rosmon/state:', message);
-      this.setState({rosmon: message});
+      this.setState({rosmon: message as RosMon});
     });
 
   }
@@ -82,16 +84,16 @@ class App extends React.Component<{},AppState> {
   render() {
     return (
       <div className="App">
-        { this.state.rosmon && this.state.rosmon.nodes &&
+        { this.state.rosmon &&
           <RosNodeHealth nodes={this.state.rosmon.nodes} />
         }
         <WebsocketUrlInput
             hostname={this.state.hostname}
             websocketStatus={this.state.websocketStatus}
             onSubmit={this.onHostnameSubmit}
-            lastMessageTimestamp={this.state.rosmon.header ? this.state.rosmon.header.stamp.secs : 0}
+            lastMessageTimestamp={this.state.rosmon ? this.state.rosmon.header.stamp.secs : 0}
             />
-        <Joystick />
+        <Joystick sensor_msgs_joy={this.state.sensor_msgs_joy}/>
       </div>
     );
   }
