@@ -7,6 +7,7 @@ import RosNodeHealth from './RosNodeHealth/RosNodeHealth';
 import { RosMon, RosOut, SensorMsgsJoy } from './ROS_message_types';
 import WebGamePad from './WebGamePad';
 import RosOutLog from './RosOutLog/RosOutLog';
+import { Drawer, Paper } from '@material-ui/core';
 
 type AppState = {
   rosmon?: RosMon,
@@ -113,21 +114,27 @@ class App extends React.Component<{},AppState> {
   render() {
     return (
       <div className="App" style={{background: "url(http://" + this.state.hostname + ":8080/stream?topic=/cv_camera/image_raw&type=ros_compressed&"+this.state.reconnect_count+") no-repeat center center fixed"}}>
-        <div className="rightPanel">
+        <Drawer
+          className="rightDrawer"
+          variant="permanent"
+          anchor="right"
+          open>
+          <Paper>
+            <Joystick sensor_msgs_joy={this.state.sensor_msgs_joy}/>
+          </Paper>
           { this.state.rosmon &&
             <RosNodeHealth nodes={this.state.rosmon.nodes} websocketStatus={this.state.websocketStatus}/>
           }
           { this.state.rosouts &&
             <RosOutLog rosouts={this.state.rosouts} websocketStatus={this.state.websocketStatus}/>
           }
-        </div>
+        </Drawer>
         <WebsocketUrlInput
             hostname={this.state.hostname}
             websocketStatus={this.state.websocketStatus}
             onSubmit={this.onHostnameSubmit}
             lastMessageTimestamp={this.state.rosmon ? this.state.rosmon.header.stamp.secs : 0}
             />
-        <Joystick sensor_msgs_joy={this.state.sensor_msgs_joy}/>
       </div>
     );
   }
