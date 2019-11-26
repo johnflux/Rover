@@ -11,3 +11,7 @@
   width: unset;
   margin: 3px;
 }
+
+.RosNodeHealth .crashed {
+  background: lightcoral;
+}

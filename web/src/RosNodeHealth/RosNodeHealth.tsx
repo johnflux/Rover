@@ -38,7 +38,7 @@ const RosNodeHealth: React.SFC<RosNodeHealthProps> = (props) => {
           </TableHead>
           <TableBody>
               { props.nodes.map(node =>
-                <TableRow key={node.name}>
+                <TableRow key={node.name} className={node.state !== 1 ? 'crashed' : ''}>
                   <TableCell>{node.name}</TableCell>
                   {hasRestarts && <TableCell>{node.restart_count}</TableCell>}
                   {hasStateNotRunning && <TableCell>{stateToStr[node.state]}</TableCell>}
