@@ -6,4 +6,8 @@
   <!-- Simple Drive Node -->
   <include file="$(find rover)/launch/simple_drive.launch"/>
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+  <!-- camera -->
+  <node name="web_video_server" pkg="web_video_server" type="web_video_server" /> 
+  <node name="cv_camera" pkg="cv_camera" type="cv_camera_node" /> 
+   
 </launch>
