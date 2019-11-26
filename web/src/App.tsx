@@ -14,6 +14,7 @@ type AppState = {
   sensor_msgs_joy?: SensorMsgsJoy,
   hostname: string,
   websocketStatus: "Disconnected" | "Connected",
+  reconnect_count: number;
 }
 
 class App extends React.Component<{},AppState> {
@@ -26,19 +27,20 @@ class App extends React.Component<{},AppState> {
       rosmon: undefined,
       rosouts: [],
       sensor_msgs_joy: undefined,
-      hostname: localStorage.getItem('websocket_url') || ('ws://' + window.location.hostname + ':9090'),
+      hostname: localStorage.getItem('websocket_url') || window.location.hostname,
       websocketStatus: "Disconnected",
+      reconnect_count: 0,
     }
     this.gamepad = new WebGamePad();
     this.gamepad.onJoystickMessage = (msg: SensorMsgsJoy) => this.handleJoystickMessage(msg);
 
     this.ros = new ROSLIB.Ros({
-      url: this.state.hostname
+      url: "ws://" + this.state.hostname + ":9090"
     });
 
     this.ros.on('connection', () => {
       console.log('Connected to websocket server.');
-      this.setState({websocketStatus: "Connected", rosouts: [], rosmon: undefined, sensor_msgs_joy: undefined});
+      this.setState({websocketStatus: "Connected", rosouts: [], rosmon: undefined, sensor_msgs_joy: undefined, reconnect_count: this.state.reconnect_count+1});
     });
 
     this.ros.on('error', (error: string) => {
@@ -48,7 +50,7 @@ class App extends React.Component<{},AppState> {
     this.ros.on('close', () => {
       console.log('Connection to websocket server closed.');
       this.setState({websocketStatus: "Disconnected"});
-      this.ros.connect(this.state.hostname);
+      this.ros.connect("ws://" + this.state.hostname + ":9090");
     });
 
     /*new ROSLIB.Topic({
@@ -110,7 +112,7 @@ class App extends React.Component<{},AppState> {
 
   render() {
     return (
-      <div className="App">
+      <div className="App" style={{background: "url(http://" + this.state.hostname + ":8080/stream?topic=/cv_camera/image_raw&type=ros_compressed&"+this.state.reconnect_count+") no-repeat center center fixed"}}>
         <div className="rightPanel">
           { this.state.rosmon &&
             <RosNodeHealth nodes={this.state.rosmon.nodes} websocketStatus={this.state.websocketStatus}/>

@@ -1,3 +1,20 @@
 .App .rightPanel {
   float: right;
 }
+
+.App {
+  -webkit-background-size: contain !important;
+  -moz-background-size: contain !important;
+  -o-background-size: contain !important;
+  background-size: contain !important;
+}
+
+.MuiPaper-root {
+  background-color: #fff8 !important;
+}
+
+html, body, #root, .App {
+  min-width: 100vw;
+  min-height: 100vh;
+}
+

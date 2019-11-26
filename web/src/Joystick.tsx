@@ -33,7 +33,7 @@ const Joystick: React.SFC<JoystickProps> = (props) => {
   return (
     <div className="Joystick">
       <svg width="400" height="348">
-        <image xlinkHref="controller.jpg" x="0" y="0" height="348" width="400" />
+        <image xlinkHref="controller.png" x="0" y="0" height="348" width="400" />
         { sensor_msgs_joy && buttonPositionsCenter.map((positions, index) =>
           sensor_msgs_joy.buttons[index] &&
             <circle key={index} cx={positions[0]} cy={positions[1]} r={12} fill="#ad009e" style={{opacity: 0.8}}/>
