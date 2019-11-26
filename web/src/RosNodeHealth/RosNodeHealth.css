@@ -11,3 +11,7 @@
 .RosNodeHealth .crashed {
   background: lightcoral;
 }
+
+.RosNodeHealth .notconnected .MuiTableCell-root {
+  color: lightcoral;
+}

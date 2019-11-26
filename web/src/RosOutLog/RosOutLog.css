@@ -28,3 +28,7 @@
 .RosOutLog .rosout_level_1 .level_mark {
   color: yellow;
 }
+
+.RosOutLog .notconnected .MuiTableCell-root {
+  color: lightcoral;
+}

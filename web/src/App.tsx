@@ -38,7 +38,7 @@ class App extends React.Component<{},AppState> {
 
     this.ros.on('connection', () => {
       console.log('Connected to websocket server.');
-      this.setState({websocketStatus: "Connected"});
+      this.setState({websocketStatus: "Connected", rosouts: [], rosmon: undefined, sensor_msgs_joy: undefined});
     });
 
     this.ros.on('error', (error: string) => {
@@ -113,10 +113,10 @@ class App extends React.Component<{},AppState> {
       <div className="App">
         <div className="rightPanel">
           { this.state.rosmon &&
-            <RosNodeHealth nodes={this.state.rosmon.nodes}/>
+            <RosNodeHealth nodes={this.state.rosmon.nodes} websocketStatus={this.state.websocketStatus}/>
           }
           { this.state.rosouts &&
-            <RosOutLog rosouts={this.state.rosouts}/>
+            <RosOutLog rosouts={this.state.rosouts} websocketStatus={this.state.websocketStatus}/>
           }
         </div>
         <WebsocketUrlInput

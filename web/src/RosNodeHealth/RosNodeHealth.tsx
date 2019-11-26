@@ -5,7 +5,8 @@ import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip } from
 import { RosMonNode } from '../ROS_message_types';
 
 type RosNodeHealthProps = {
-  nodes: RosMonNode[]
+  nodes: RosMonNode[],
+  websocketStatus: "Disconnected" | "Connected",
 }
 
 const stateToStr = [
@@ -25,7 +26,7 @@ const RosNodeHealth: React.SFC<RosNodeHealthProps> = (props) => {
   return (
     <div className="RosNodeHealth">
       <Paper>
-        <Table size="small">
+        <Table size="small" className={props.websocketStatus != 'Connected' ? 'notconnected' : ''}>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
