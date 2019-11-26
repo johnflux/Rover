@@ -8,13 +8,25 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   actionlib_msgs
   std_msgs
+  message_generation
 )
 
 catkin_python_setup()
 
+add_message_files(
+  FILES
+  Motor.msg
+  Servo.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
+
 catkin_package(
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS rospy sensor_msgs geometry_msgs actionlib_msgs std_msgs
+  CATKIN_DEPENDS rospy sensor_msgs geometry_msgs actionlib_msgs std_msgs message_runtime
 )
 
 catkin_install_python(

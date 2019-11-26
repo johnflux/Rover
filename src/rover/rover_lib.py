@@ -64,8 +64,16 @@ class Motors:
 			kit = self.kitLeft if motor_conf['left_controller'] else self.kitRight
 			motor.dcmotor = getattr(kit, 'motor' + str(motor_conf['controller_motor_number']))
 			motor.wired_backwards = motor_conf['wired_backwards']
-			motor.arn = motor_conf['arm']
+			motor.arm = motor_conf['arm']
 			print("Configured", motor_name, "on", motor_conf['controller_motor_number'], 'and it', 'is' if motor_conf['wired_backwards'] else 'is not', 'wired backwards')
+
+	def setMotorThrottle(self, motor_name, throttle):
+		""" Set the given motor to the given value (between -100 to 100) divided by 100 (To make it between -1 and 1).  Only useful for debugging """
+		motor = getattr(self, motor_name)
+		if throttle == 0:
+			motor.throttle = None
+		else:
+			motor.throttle = throttle
 
 	# Only real use is to set throttle to 0 for all, or for debugging
 	def allThrottle(self, throttle):
@@ -94,7 +102,6 @@ class Motors:
 		self.allThrottle(throttle)
 
 	def twistThrottle(self, throttle):
-		print("Twist throttle to", throttle)
 		self.left_front.throttle = throttle
 		self.left_middle.throttle = throttle/2
 		self.left_back.throttle = throttle
@@ -102,20 +109,73 @@ class Motors:
 		self.right_middle.throttle = -throttle/2
 		self.right_back.throttle = -throttle
 
+class Servo:
+	def __init__(self):
+		self.servomotor = None
+		self.backwards = False
+		self.zero_offset = 0
+		self.max = 180
+		self.min = 0
+
+	@property
+	def angle(self):
+		return self.dcmotor.angle
+
+	@angle.setter
+	def angle(self, angle):
+		if angle != None:
+			if angle > self.max:
+				angle = self.max
+			if angle < self.min:
+				angle = self.min
+		self.servomotor.angle = angle
+
+	@property
+	def offset_angle(self):
+		if self.dcmotor.angle == None:
+			return 0
+		if not self.backwards:
+			return self.dcmotor.angle - self.zero_offset
+		else:
+			return -(self.dcmotor.angle - self.zero_offset)
+
+	@offset_angle.setter
+	def offset_angle(self, offset):
+		if offset == None:
+			self.servomotor.angle = None
+		else:
+			if self.backwards:
+				offset = -offset
+			self.angle = self.zero_offset + offset
+
 class Servos():
 	def __init__(self):
 		self.servo = ServoKit(channels=16)
-		self.right_front = self.servo.servo[3]
-		self.right_back = self.servo.servo[2]
-		self.left_front = self.servo.servo[1]
-		self.left_back = self.servo.servo[0]
-		self.arm_updown = self.servo.servo[4]
-		self.arm_leftright = self.servo.servo[5]
 
-		self.max_arm_leftright = 180
-		self.min_arm_leftright = 60
-		self.max_arm_updown = 160
-		self.min_arm_updown = 85
+		self.servo_names = [ 'right_front', 'right_back', 'left_front', 'left_back', 'arm_updown', 'arm_leftright' ]
+		for servo_name in self.servo_names:
+			setattr(self, servo_name, Servo())
+
+		self.right_front.servomotor = self.servo.servo[14]
+		self.right_back.servomotor = self.servo.servo[15]
+		self.left_front.servomotor = self.servo.servo[13]
+		self.left_back.servomotor = self.servo.servo[12]
+		self.arm_updown.servomotor = self.servo.servo[0]
+		self.arm_leftright.servomotor = self.servo.servo[1]
+
+		self.right_front.zero_offset = 30
+		self.right_back.zero_offset = 110
+		self.left_front.zero_offset = 90
+		self.left_back.zero_offset = 130
+		self.arm_updown.zero_offset = 140
+
+		self.right_front.backwards=True
+		self.left_back.backwards=True
+
+		self.arm_leftright.max = 180
+		self.arm_leftright.min = 60
+		self.arm_updown.max = 160
+		self.arm_updown.min = 85
 
 		self.rate_arm_updown = None
 		self.rate_arm_leftright = None
@@ -125,27 +185,36 @@ class Servos():
 		self.right_back.angle=None
 		self.left_front.angle=None
 		self.left_back.angle=None
+	
+	def setServo(self, servo_name, offset_angle):
+		""" Set the given motor to the given offset (typically between about -60 to 60). 0 is a special case that cuts power to the servo """
+		servo = getattr(self, servo_name)
+		if offset_angle == 0:
+			servo.angle = None
+		else:
+			servo.offset_angle = offset_angle
+
 	def armOff(self):
 		self.arm_updown.angle=None
 		self.arm_leftright.angle=None
 		self.rate_arm_updown = None
 		self.rate_arm_leftright = None
 
-	def setTwist(self, angle):
-		self.right_front.angle=30+angle
-		self.right_back.angle=110+angle
-		self.left_front.angle=90+angle
-		self.left_back.angle=130-angle
+	def setTwist(self, offset_angle):
+		self.right_front.offset_angle=offset_angle
+		self.right_back.offset_angle=offset_angle
+		self.left_front.offset_angle=offset_angle
+		self.left_back.offset_angle=offset_angle
 	def twist(self):
-		self.right_front.angle=30 - 30
-		self.right_back.angle=110 + 40
-		self.left_front.angle=90 + 35
-		self.left_back.angle=130 - 40
+		self.right_front.offset_angle = 30
+		self.right_back.offset_angle = 40
+		self.left_front.offset_angle = 35
+		self.left_back.offset_angle = 40
 
 	def armAllTheWayUp(self):
 		self.arm_updown.angle = self.min_arm_updown
 	def armStraight(self):
-		self.arm_updown.angle = 140
+		self.arm_updown.offset_angle = 0
 	def armAllTheWayDown(self):
 		self.arm_updown.angle = self.max_arm_updown
 	def armHorizontalCenter(self):

@@ -7,13 +7,13 @@
 	},
 	"left_front": {
 		"left_controller": true,
-		"controller_motor_number": 1,
+		"controller_motor_number": 2,
 		"wired_backwards": true,
 		"arm": false
 	},
 	"left_middle": {
 		"left_controller": true,
-		"controller_motor_number": 2,
+		"controller_motor_number": 1,
 		"wired_backwards": true,
 		"arm": false
 	},
