@@ -74,7 +74,7 @@ class Motors:
 			motor = getattr(self, motor_name)
 			if not motor.arm:
 				motor.throttle = throttle
-	def allOff(self, throttle):
+	def allOff(self):
 		self.currentAllThrottle = None
 		for motor_name in self.motor_names:
 			motor = getattr(self, motor_name)
