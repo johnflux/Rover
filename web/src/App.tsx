@@ -4,11 +4,13 @@ import Joystick from './Joystick';
 import ROSLIB from 'roslib';
 import WebsocketUrlInput from './WebsocketUrlInput/WebsocketUrlInput';
 import RosNodeHealth from './RosNodeHealth/RosNodeHealth';
-import { RosMon, SensorMsgsJoy } from './ROS_message_types';
+import { RosMon, RosOut, SensorMsgsJoy } from './ROS_message_types';
 import WebGamePad from './WebGamePad';
+import RosOutLog from './RosOutLog/RosOutLog';
 
 type AppState = {
   rosmon?: RosMon,
+  rosouts: RosOut[],
   sensor_msgs_joy?: SensorMsgsJoy,
   hostname: string,
   websocketStatus: "Disconnected" | "Connected",
@@ -22,6 +24,7 @@ class App extends React.Component<{},AppState> {
     super(props);
     this.state = {
       rosmon: undefined,
+      rosouts: [],
       sensor_msgs_joy: undefined,
       hostname: localStorage.getItem('websocket_url') || ('ws://' + window.location.hostname + ':9090'),
       websocketStatus: "Disconnected",
@@ -74,6 +77,20 @@ class App extends React.Component<{},AppState> {
       //console.log('Received message on /rosmon/state:', message);
       this.setState({rosmon: message as RosMon});
     });
+
+    new ROSLIB.Topic({
+      ros: this.ros,
+      name: '/rosout',
+      messageType: 'rosgraph_msgs/Log'
+    }).subscribe((message) => {
+      //console.log('Received message on /rosout:', message);
+      var rosouts = this.state.rosouts;
+      const max_rosouts = 6;
+      if (rosouts.length >= max_rosouts) {
+        rosouts = rosouts.slice(rosouts.length - max_rosouts + 1);
+      }
+      this.setState({rosouts: [...rosouts, (message as RosOut)]});
+    });
   }
 
   handleJoystickMessage(msg: SensorMsgsJoy) {
@@ -94,9 +111,14 @@ class App extends React.Component<{},AppState> {
   render() {
     return (
       <div className="App">
-        { this.state.rosmon &&
-          <RosNodeHealth nodes={this.state.rosmon.nodes} />
-        }
+        <div className="rightPanel">
+          { this.state.rosmon &&
+            <RosNodeHealth nodes={this.state.rosmon.nodes}/>
+          }
+          { this.state.rosouts &&
+            <RosOutLog rosouts={this.state.rosouts}/>
+          }
+        </div>
         <WebsocketUrlInput
             hostname={this.state.hostname}
             websocketStatus={this.state.websocketStatus}

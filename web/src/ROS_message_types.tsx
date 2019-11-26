@@ -8,24 +8,33 @@ export type RosMonNode = {
   "system_load": number,
 }
 
-export type RosMon = {
-  header: {
-    stamp: {
-      secs: number
-    }
+type Header = {
+  "stamp": {
+    "secs": number,
+    "nsecs": number
   },
+  "frame_id": string,
+  "seq": number
+}
+
+export type RosMon = {
+  header: Header,
   nodes: [RosMonNode]
 }
 
+export type RosOut = {
+  header: Header,
+  level: number,    // 1=debug, 2=info, 4=warn, 8=error, 16=fatal
+  name: string,     // name of the node
+  msg: string,
+  file: string,     // file the message came from
+  function: string, // function the message came from
+  line: number,     // line the message came from
+  topics: [string], // topic names that the node publishes
+}
+
 export type SensorMsgsJoy = {
-  "header"?: {
-    "stamp": {
-      "secs": number,
-      "nsecs": number
-    },
-    "frame_id": string,
-    "seq": number
-  },
+  "header"?: Header,
   "buttons": [
     number, /* A */
     number, /* B */

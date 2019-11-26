@@ -1,15 +1,6 @@
 import "joypad.js";
 import { SensorMsgsJoy } from "./ROS_message_types";
 
-const sensorMsgsJoyHeader = {
-    "stamp": {
-        "secs": 0,
-        "nsecs": 0
-    },
-    "frame_id": "",
-    "seq": 0
-}
-
 class WebGamePad {
     joypad: any;
     lastJoystickMessageJson: string = "";
@@ -32,7 +23,6 @@ class WebGamePad {
 
     sendJoystickMessage() {
         const msg: SensorMsgsJoy = {
-            header: sensorMsgsJoyHeader,
             buttons: this.joypad.instances[0].buttons.map((x: any) => x.value as number),
             axes: this.joypad.instances[0].axes.map((v:number) => -v),
         };

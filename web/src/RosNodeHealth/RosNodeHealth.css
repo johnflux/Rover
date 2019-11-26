@@ -1,7 +1,3 @@
-.RosNodeHealth {
-  float: right;
-}
-
 .RosNodeHealth .MuiTableCell-root {
   font-size: small;
   padding: 0 1px;

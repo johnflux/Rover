@@ -1,0 +1,30 @@
+
+.RosOutLog .MuiTableCell-root {
+  font-size: small;
+  padding: 0 1px;
+}
+
+.RosOutLog .MuiTable-root {
+  width: unset;
+  margin: 3px;
+}
+
+.RosOutLog .rosout_level_16 .level_mark {
+  color: darkred;
+}
+
+.RosOutLog .rosout_level_8 .level_mark {
+  color: red;
+}
+
+.RosOutLog .rosout_level_4 .level_mark {
+  color: orange;
+}
+
+.RosOutLog .rosout_level_2 .level_mark {
+  color: yellow;
+}
+
+.RosOutLog .rosout_level_1 .level_mark {
+  color: yellow;
+}

@@ -5,7 +5,7 @@ import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip } from
 import { RosMonNode } from '../ROS_message_types';
 
 type RosNodeHealthProps = {
-  nodes: [RosMonNode]
+  nodes: RosMonNode[]
 }
 
 const stateToStr = [
