@@ -3,7 +3,6 @@ import './RosOutLog.css';
 
 import { Paper, Table, TableBody, TableCell, TableRow } from '@material-ui/core';
 import { RosOut } from '../ROS_message_types';
-import { maxWidth } from '@material-ui/system';
 
 type RosOutLogProps = {
   rosouts: RosOut[],
@@ -14,7 +13,7 @@ const RosOutLog: React.SFC<RosOutLogProps> = (props) => {
   return (
     <div className="RosOutLog">
       <Paper>
-        <Table size="small" className={props.websocketStatus != 'Connected' ? 'notconnected' : ''}>
+        <Table size="small" className={props.websocketStatus !== 'Connected' ? 'notconnected' : ''}>
           <TableBody>
               { props.rosouts.map((rosout,index) =>
                 <TableRow key={index} className={'rosout_level_' + rosout.level}>

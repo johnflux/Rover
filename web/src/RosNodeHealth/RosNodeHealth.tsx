@@ -26,7 +26,7 @@ const RosNodeHealth: React.SFC<RosNodeHealthProps> = (props) => {
   return (
     <div className="RosNodeHealth">
       <Paper>
-        <Table size="small" className={props.websocketStatus != 'Connected' ? 'notconnected' : ''}>
+        <Table size="small" className={props.websocketStatus !== 'Connected' ? 'notconnected' : ''}>
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
