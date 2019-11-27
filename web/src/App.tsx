@@ -101,10 +101,15 @@ class App extends React.Component<{},AppState> {
   }
 
   handleJoystickMessage(msg: SensorMsgsJoy) {
-    // We don't need to manually set the state, because
-    // we also subscribe to this topic
-    //this.setState({sensor_msgs_joy: msg});
-    this.sensorMsgTopic.publish(new ROSLIB.Message(msg));
+    if (this.state.websocketStatus === "Connected") {
+      // We don't need to manually set the state, because
+      // we also subscribe to this topic
+      this.sensorMsgTopic.publish(new ROSLIB.Message(msg));
+    } else {
+      // We are not connected to the websocket, but it's nice
+      // to see the gui respond anyway
+      this.setState({sensor_msgs_joy: msg});
+    }
   }
 
   connectToWebsocket() {

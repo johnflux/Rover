@@ -1,6 +1,11 @@
 import "joypad.js";
 import { SensorMsgsJoy } from "./ROS_message_types";
 
+function deadzone(x: number) {
+    if ( x > -0.1 && x < 0.1)
+        return 0;
+    return x;
+}
 class WebGamePad {
     joypad: any;
     lastJoystickMessageJson: string = "";
@@ -24,7 +29,7 @@ class WebGamePad {
     sendJoystickMessage() {
         const msg: SensorMsgsJoy = {
             buttons: this.joypad.instances[0].buttons.map((x: any) => x.value as number),
-            axes: this.joypad.instances[0].axes.map((v:number) => -v),
+            axes: this.joypad.instances[0].axes.map((v:number) => deadzone(-v)),
         };
         const msgJson = JSON.stringify(msg);
         if (this.lastJoystickMessageJson === msgJson)
