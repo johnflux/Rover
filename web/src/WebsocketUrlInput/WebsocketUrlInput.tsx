@@ -1,7 +1,7 @@
 import React from 'react';
 import './WebsocketUrlInput.css';
 import { Power, PowerOff } from '@material-ui/icons';
-import { Input, InputAdornment } from '@material-ui/core';
+import { Input, InputAdornment, CircularProgress } from '@material-ui/core';
 
 type WebsocketUrlInputProps = {
   //children?: React.ReactNode,
@@ -62,12 +62,13 @@ class WebsocketUrlInput extends React.Component<WebsocketUrlInputProps, Websocke
           onKeyDown={this.handleKeyDown}
           endAdornment={
             <InputAdornment position="end">
+              { isConnected ? null : <CircularProgress size="20px"/> }
               { isConnected ? <Power /> : <PowerOff /> }
             </InputAdornment>
           }
           />
           <span className="timestamp">
-            [{ timestamp }]
+            { timestamp ? "[" + timestamp + "]" : null }
           </span>
       </div>
     );

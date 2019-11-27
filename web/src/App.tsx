@@ -8,6 +8,7 @@ import { RosMon, RosOut, SensorMsgsJoy } from './ROS_message_types';
 import WebGamePad from './WebGamePad';
 import RosOutLog from './RosOutLog/RosOutLog';
 import { Drawer, Paper } from '@material-ui/core';
+import MySnackbar from './MySnackbar/MySnackbar';
 
 type AppState = {
   rosmon?: RosMon,
@@ -15,7 +16,8 @@ type AppState = {
   sensor_msgs_joy?: SensorMsgsJoy,
   hostname: string,
   websocketStatus: "Disconnected" | "Connected",
-  reconnect_count: number;
+  reconnect_count: number,
+  errorMessages?: string[],
 }
 
 class App extends React.Component<{},AppState> {
@@ -31,6 +33,7 @@ class App extends React.Component<{},AppState> {
       hostname: localStorage.getItem('websocket_url') || window.location.hostname,
       websocketStatus: "Disconnected",
       reconnect_count: 0,
+      errorMessages: undefined,
     }
     this.gamepad = new WebGamePad();
     this.gamepad.onJoystickMessage = (msg: SensorMsgsJoy) => this.handleJoystickMessage(msg);
@@ -46,6 +49,7 @@ class App extends React.Component<{},AppState> {
 
     this.ros.on('error', (error: string) => {
       console.log('Error connecting to websocket server: ', error);
+      this.showErrorMessage("Error connecting to websocket server " + (error as any).target.url);
     });
 
     this.ros.on('close', () => {
@@ -97,6 +101,8 @@ class App extends React.Component<{},AppState> {
   }
 
   handleJoystickMessage(msg: SensorMsgsJoy) {
+    // We don't need to manually set the state, because
+    // we also subscribe to this topic
     //this.setState({sensor_msgs_joy: msg});
     this.sensorMsgTopic.publish(new ROSLIB.Message(msg));
   }
@@ -109,6 +115,17 @@ class App extends React.Component<{},AppState> {
   onHostnameSubmit = (newHostname: string) => {
     localStorage.setItem('websocket_url', newHostname);
     this.setState({ hostname: newHostname}, () => this.connectToWebsocket());
+  }
+
+  showErrorMessage(message: string) {
+    //if (this.state.errorMessages === undefined)
+      this.setState({errorMessages: [message]});
+    //else
+    //  this.setState({errorMessages: [...this.state.errorMessages, message]});
+  }
+
+  clearErrorMessages = () => {
+    this.setState({errorMessages: undefined});
   }
 
   render() {
@@ -130,11 +147,15 @@ class App extends React.Component<{},AppState> {
           }
         </Drawer>
         <WebsocketUrlInput
-            hostname={this.state.hostname}
-            websocketStatus={this.state.websocketStatus}
-            onSubmit={this.onHostnameSubmit}
-            lastMessageTimestamp={this.state.rosmon ? this.state.rosmon.header.stamp.secs : 0}
-            />
+          hostname={this.state.hostname}
+          websocketStatus={this.state.websocketStatus}
+          onSubmit={this.onHostnameSubmit}
+          lastMessageTimestamp={this.state.rosmon ? this.state.rosmon.header.stamp.secs : 0}
+          />
+        <MySnackbar
+          errorMessages={this.state.errorMessages}
+          onClose={this.clearErrorMessages}
+          />
       </div>
     );
   }

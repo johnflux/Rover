@@ -1,0 +1,18 @@
+.snackbar-message {
+    display: flex;
+    align-items: center;
+}
+
+.snackbar-error {
+    background-color: darkred;
+}
+
+.snackbar-messagelist {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+}
+
+.MuiSnackbarContent-root {
+    background-color: inherit !important;
+}
