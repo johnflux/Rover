@@ -9,5 +9,5 @@
   <!-- camera -->
   <node name="web_video_server" pkg="web_video_server" type="web_video_server" /> 
   <node name="cv_camera" pkg="cv_camera" type="cv_camera_node" /> 
-   
+  <node name="power_service" pkg="rover" type="power_service" /> 
 </launch>

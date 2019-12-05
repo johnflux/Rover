@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+# Yes - python3, not 2
+
+from rover import power_service
+
+if __name__ == '__main__':
+    power_service.main()
