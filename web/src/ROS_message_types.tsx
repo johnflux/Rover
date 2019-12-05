@@ -1,10 +1,11 @@
+/* See https://github.com/xqms/rosmon/blob/master/rosmon_msgs/msg/NodeState.msg */
 export type RosMonNode = {
   "user_load": number,
-  "name": string,
+  "name": string, /* Ros node namespace */
   "restart_count": number,
   "state": number, /* 0 = idle, 1 = running, 2 = crashed, 3 = waiting */
   "memory": number, /* bytes */
-  "ns": string, /* Not sure what this means */
+  "ns": string, /* Ros node namespace */
   "system_load": number,
 }
 
@@ -19,7 +20,7 @@ type Header = {
 
 export type RosMon = {
   header: Header,
-  nodes: [RosMonNode]
+  nodes: RosMonNode[]
 }
 
 export type RosOut = {
@@ -30,7 +31,7 @@ export type RosOut = {
   file: string,     // file the message came from
   function: string, // function the message came from
   line: number,     // line the message came from
-  topics: [string], // topic names that the node publishes
+  topics: string[], // topic names that the node publishes
 }
 
 export type SensorMsgsJoy = {

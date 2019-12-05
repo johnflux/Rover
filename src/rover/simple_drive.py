@@ -3,7 +3,6 @@
 import traceback
 from .rover_lib import Motors,Servos
 import rospy
-import struct
 
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32
@@ -44,9 +43,9 @@ def main():
 			print(traceback.format_exc())
 			motors.allOff()
 			servos.allOff()
-		
+
 		# data.linear.x, data.angular.z)
-	
+
 	def on_new_motor_cmd(data):
 		""" This command is mostly for debugging.  So that the user can directly manipulate a motor, to
 		    test that it is working, mapped correctly etc """
@@ -58,7 +57,7 @@ def main():
 		motors.setMotorThrottle('right_back', data.right_back / 100.0)
 		motors.setMotorThrottle('arm_middle', data.arm_middle / 100.0)
 		motors.setMotorThrottle('arm_bottom', data.arm_bottom / 100.0)
-	
+
 	def on_new_servo_cmd(data):
 		servos.setServo('right_front', data.right_front)
 		servos.setServo('right_back', data.right_back)
