@@ -9,11 +9,11 @@ def main():
     def on_new_state(state):
         state_to_str = ["Idle", "Running", "Crashed", "Waiting"]
         for node in state.nodes:
-            print(node.ns, node.name, '\t', state_to_str[node.state], "\tUser:", node.user_load, "\tSys:", node.system_load, "\tMem:", node.memory)
+            print(node.ns, node.name, '\t', state_to_str[node.state], "\tUser:", round(100*node.user_load), "\tSys:", round(100*node.system_load), "\tMem:", round(node.memory/1024) + 'kb')
         exit(0)
 
-    subscriber_twist = rospy.Subscriber("/rosmon/state", State, on_new_state, queue_size=1)
-    rospy.spin()
+    state = rospy.wait_for_message("/rosmon/state", State, 2)
+    on_new_state(state)
 
     print("You can start/stop/restart services like:")
     print('  rosservice call /rosmon/start_stop "joy_drive" "" 2')
