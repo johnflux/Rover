@@ -9,6 +9,7 @@ import WebGamePad from './WebGamePad';
 import RosOutLog from './RosOutLog/RosOutLog';
 import { Drawer, Paper } from '@material-ui/core';
 import MySnackbar from './MySnackbar/MySnackbar';
+import OnScreenJoystick from './OnScreenJoystick/OnScreenJoystick';
 
 type AppState = {
   rosmon?: RosMon,
@@ -72,7 +73,7 @@ class App extends React.Component<{},AppState> {
       messageType: 'sensor_msgs/Joy'
     });
     this.sensorMsgTopic.subscribe((message) => {
-      console.log('Received message on /joy:', message);
+      //console.log('Received message on /joy:', message);
       this.setState({sensor_msgs_joy: message as SensorMsgsJoy});
     });
 
@@ -133,6 +134,23 @@ class App extends React.Component<{},AppState> {
     this.setState({errorMessages: undefined});
   }
 
+  handleOnScreenJoystickMove = (x: number, y: number) => {
+    let msg: SensorMsgsJoy = {
+      buttons: [0,0,0,0,0,0,0,0,0,0,0],
+      axes: [0,0,0,x,y,0,0,0]
+    }
+
+    if (this.state.websocketStatus === "Connected") {
+      // We don't need to manually set the state, because
+      // we also subscribe to this topic
+      this.sensorMsgTopic.publish(new ROSLIB.Message(msg));
+    } else {
+      // We are not connected to the websocket, but it's nice
+      // to see the gui respond anyway
+      this.setState({sensor_msgs_joy: msg});
+    }
+  }
+
   render() {
     return (
       <div className="App" style={{background: "url(http://" + this.state.hostname + ":8080/stream?topic=/cv_camera/image_raw&type=ros_compressed&"+this.state.reconnect_count+") no-repeat center center fixed"}}>
@@ -157,6 +175,9 @@ class App extends React.Component<{},AppState> {
           onSubmit={this.onHostnameSubmit}
           lastMessageTimestamp={this.state.rosmon ? this.state.rosmon.header.stamp.secs : 0}
           />
+        <OnScreenJoystick
+          onMove={this.handleOnScreenJoystickMove}
+        />
         <MySnackbar
           errorMessages={this.state.errorMessages}
           onClose={this.clearErrorMessages}
