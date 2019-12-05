@@ -9,11 +9,11 @@ def handle_poweroff(req):
     #   $ sudo visudo
     # And added:
     #   script  ALL=(root)  NOPASSWD: /sbin/reboot ""
-    return subprocess.call("sudo reboot -h", shell=True)
+    return subprocess.call("(sleep 1; sudo reboot -h) &", shell=True)
 
 def handle_reboot(req):
     print("Rebooting")
-    return subprocess.call("sudo reboot", shell=True)
+    return subprocess.call("(sleep 1; sudo reboot) &", shell=True)
 
 def main():
     rospy.init_node('power_off')
