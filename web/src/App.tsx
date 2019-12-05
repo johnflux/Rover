@@ -2,7 +2,6 @@ import React from 'react';
 import './App.css';
 import Joystick from './Joystick';
 import ROSLIB from 'roslib';
-import WebsocketUrlInput from './WebsocketUrlInput/WebsocketUrlInput';
 import RosNodeHealth from './RosNodeHealth/RosNodeHealth';
 import { RosMon, RosOut, SensorMsgsJoy } from './ROS_message_types';
 import WebGamePad from './WebGamePad';
@@ -10,6 +9,7 @@ import RosOutLog from './RosOutLog/RosOutLog';
 import { Drawer, Paper } from '@material-ui/core';
 import MySnackbar from './MySnackbar/MySnackbar';
 import OnScreenJoystick from './OnScreenJoystick/OnScreenJoystick';
+import MyAppBar from './MyAppBar/MyAppBar';
 
 type AppState = {
   rosmon?: RosMon,
@@ -25,6 +25,8 @@ class App extends React.Component<{},AppState> {
   ros: any;
   gamepad: WebGamePad;
   sensorMsgTopic: ROSLIB.Topic;
+  service_poweroff: ROSLIB.Service;
+  service_reboot: ROSLIB.Service;
   constructor(props: {}) {
     super(props);
     this.state = {
@@ -99,6 +101,20 @@ class App extends React.Component<{},AppState> {
       }
       this.setState({rosouts: [...rosouts, (message as RosOut)]});
     });
+
+    // Note: You can use 'rosservice list' to see the services running
+    //       and rosservice type SERVICENAME' to see the serviceType for it
+    this.service_poweroff = new ROSLIB.Service({
+      ros : this.ros,
+      name : '/power_off/power_off',
+      serviceType : 'rover/PowerOff'
+    });
+    this.service_reboot = new ROSLIB.Service({
+      ros : this.ros,
+      name : '/power_off/reboot',
+      serviceType : 'rover/PowerOff'
+    });
+
   }
 
   handleJoystickMessage(msg: SensorMsgsJoy) {
@@ -134,6 +150,27 @@ class App extends React.Component<{},AppState> {
     this.setState({errorMessages: undefined});
   }
 
+  handlePowerOffClicked = () => {
+    console.log("PowerOff Clicked");
+    this.service_poweroff.callService(new ROSLIB.ServiceRequest(), (response) =>
+    {
+      console.log("PowerOff response from rover was", response);
+      if (response.process_exit_code !== 0)
+        this.showErrorMessage("Failed to power off - response: " + response.process_exit_code);
+      setTimeout(() => this.ros.close(), 2000); // Force close and auto-attempt reconnection
+    });
+  }
+  handleRebootClicked = () => {
+    console.log("Reboot Clicked");
+    this.service_reboot.callService(new ROSLIB.ServiceRequest(), (response) =>
+    {
+      console.log("Reboot response from rover was", response);
+      if (response.process_exit_code !== 0)
+        this.showErrorMessage("Failed to reboot - response: " + response.process_exit_code);
+      setTimeout(() => this.ros.close(), 2000); // Force close and auto-attempt reconnection
+    });
+  }
+
   handleOnScreenJoystickMove = (x: number, y: number) => {
     let msg: SensorMsgsJoy = {
       buttons: [0,0,0,0,0,0,0,0,0,0,0],
@@ -154,6 +191,14 @@ class App extends React.Component<{},AppState> {
   render() {
     return (
       <div className="App" style={{background: "url(http://" + this.state.hostname + ":8080/stream?topic=/cv_camera/image_raw&type=ros_compressed&"+this.state.reconnect_count+") no-repeat center center fixed"}}>
+        <MyAppBar
+          onPowerOff={this.handlePowerOffClicked}
+          onPowerReboot={this.handleRebootClicked}
+          hostname={this.state.hostname}
+          websocketStatus={this.state.websocketStatus}
+          onHostnameSubmit={this.onHostnameSubmit}
+          lastMessageTimestamp={this.state.rosmon ? this.state.rosmon.header.stamp.secs : 0}
+          />
         <Drawer
           className="rightDrawer"
           variant="permanent"
@@ -169,14 +214,9 @@ class App extends React.Component<{},AppState> {
             <RosOutLog rosouts={this.state.rosouts} websocketStatus={this.state.websocketStatus}/>
           }
         </Drawer>
-        <WebsocketUrlInput
-          hostname={this.state.hostname}
-          websocketStatus={this.state.websocketStatus}
-          onSubmit={this.onHostnameSubmit}
-          lastMessageTimestamp={this.state.rosmon ? this.state.rosmon.header.stamp.secs : 0}
-          />
         <OnScreenJoystick
           onMove={this.handleOnScreenJoystickMove}
+          disabled={this.state.websocketStatus !== 'Connected'}
         />
         <MySnackbar
           errorMessages={this.state.errorMessages}

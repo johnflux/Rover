@@ -5,15 +5,15 @@ from rover.srv import PowerOff
 
 def handle_poweroff(req):
     print("Shutting down")
-    # Note that we can use 'sudo reboot' because we did:
+    # Note: We can use 'sudo reboot' because we did:
     #   $ sudo visudo
     # And added:
     #   script  ALL=(root)  NOPASSWD: /sbin/reboot ""
-    return subprocess.call("(sleep 2; sudo reboot -h) &", shell=True)
+    return subprocess.call("sudo reboot -h", shell=True)
 
 def handle_reboot(req):
     print("Rebooting")
-    return subprocess.call("(sleep 2; sudo reboot) &", shell=True)
+    return subprocess.call("sudo reboot", shell=True)
 
 def main():
     rospy.init_node('power_off')

@@ -7,13 +7,14 @@ import './OnScreenJoystick.css';
 
 type OnScreenJoystickProps = {
     onMove: (x:number,y:number) => void,
+    disabled: boolean
 }
 
 const OnScreenJoystick: React.SFC<OnScreenJoystickProps> = (props) =>
     <ReactNipple
         // supports all nipplejs options
         // see https://github.com/yoannmoinet/nipplejs#options
-        options={{ mode: 'static', position: { top: '50%', left: '50%' }, color: 'green' }}
+        options={{ mode: 'static', position: { top: '50%', left: '50%' }, color: 'green'}}
         // any unknown props will be passed to the container element, e.g. 'title', 'style' etc
         style={{
             width: 150,
