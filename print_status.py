@@ -9,7 +9,7 @@ def main():
     def on_new_state(state):
         state_to_str = ["Idle", "Running", "Crashed", "Waiting"]
         for node in state.nodes:
-            print(node.ns, node.name, '\t', state_to_str[node.state], "\tUser:", round(100*node.user_load), "\tSys:", round(100*node.system_load), "\tMem:", round(node.memory/1024) + 'kb')
+            print(node.ns, node.name, '\t', state_to_str[node.state], "\tUser:", round(100*node.user_load), "\tSys:", round(100*node.system_load), "\tMem:", round(node.memory/1024),'kb')
         exit(0)
 
     state = rospy.wait_for_message("/rosmon/state", State, 2)
