@@ -157,8 +157,9 @@ class App extends React.Component<{},AppState> {
       console.log("PowerOff response from rover was", response);
       if (response.process_exit_code !== 0)
         this.showErrorMessage("Failed to power off - response: " + response.process_exit_code);
-      setTimeout(() => this.ros.close(), 2000); // Force close and auto-attempt reconnection
     });
+    this.setState({websocketStatus: "Disconnected"});
+    setTimeout(() => this.ros.close(), 3000); // Force close and auto-attempt reconnection
   }
   handleRebootClicked = () => {
     console.log("Reboot Clicked");
@@ -167,8 +168,9 @@ class App extends React.Component<{},AppState> {
       console.log("Reboot response from rover was", response);
       if (response.process_exit_code !== 0)
         this.showErrorMessage("Failed to reboot - response: " + response.process_exit_code);
-      setTimeout(() => this.ros.close(), 2000); // Force close and auto-attempt reconnection
     });
+    this.setState({websocketStatus: "Disconnected"});
+    setTimeout(() => this.ros.close(), 3000); // Force close and auto-attempt reconnection
   }
 
   handleOnScreenJoystickMove = (x: number, y: number) => {
