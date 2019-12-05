@@ -19,6 +19,11 @@ add_message_files(
   Servo.msg
 )
 
+add_service_files(
+  FILES
+  PowerOff.srv
+)
+
 generate_messages(
   DEPENDENCIES
   std_msgs
@@ -30,7 +35,7 @@ catkin_package(
 )
 
 catkin_install_python(
-  PROGRAMS nodes/simple_drive nodes/drive_teleop nodes/cmd_vel_mux
+  PROGRAMS nodes/simple_drive nodes/drive_teleop nodes/cmd_vel_mux ros_services/power_service.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

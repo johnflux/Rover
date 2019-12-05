@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import subprocess
-from testService.srv import NoArguments
+from PowerOff.srv import PowerOff
 
 def handle_poweroff(req):
     print("Shutting down")
@@ -15,8 +15,8 @@ def handle_reboot(req):
 
 def power_server():
     rospy.init_node('power_off_server')
-    s_poweroff = rospy.Service('power_off', NoArguments, handle_poweroff)
-    s_reboot = rospy.Service('reboot', NoArguments, handle_reboot)
+    s_poweroff = rospy.Service('power_off', PowerOff, handle_poweroff)
+    s_reboot = rospy.Service('reboot', PowerOff, handle_reboot)
     rospy.spin()
 
 if __name__ == "__main__":
