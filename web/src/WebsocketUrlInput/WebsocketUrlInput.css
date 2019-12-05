@@ -13,6 +13,7 @@
 .WebsocketUrlInput .timestamp {
   font-family: 'Courier New', Courier, monospace;
   font-size: small;
+  background: #FFFFFFCC
 }
 
 .WebsocketUrlInput {
