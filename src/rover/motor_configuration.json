@@ -8,7 +8,7 @@
 	"left_front": {
 		"left_controller": true,
 		"controller_motor_number": 2,
-		"wired_backwards": true,
+		"wired_backwards": false,
 		"arm": false
 	},
 	"left_middle": {
