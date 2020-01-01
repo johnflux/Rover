@@ -18,9 +18,10 @@ def main():
 		try:
 			print("Twist.  Forward:", data.linear.x, ", Rotate:", round(data.angular.z * 45))
 			print("arm updown:", data.linear.y, ", leftright:", data.linear.z)
-			motors.allGentleThrottle(data.linear.x)
 			motors.armMiddleThrottle(data.linear.y)
 			motors.armBottomThrottle(data.linear.z)
+			if abs(data.angular.z) > abs(data.linear.x):
+				data.linear.x = 0
 			#if data.linear.y == -2:
 			#	servos.moveArmUp(None)
 			#else:
@@ -32,15 +33,17 @@ def main():
 
 			if data.angular.z == 0 and data.linear.x == 0:
 				print("Servos off")
+				motors.allGentleThrottle(data.linear.x)
 				servos.allOff()
 			elif data.angular.z == 0 or data.linear.x != 0:
+				#motors.allGentleThrottle(data.linear.x)
 				print("Servos on")
 				servos.setTwist(0)
 			else:
 				servos.twist()
-				motors.twistThrottle(data.angular.z)
+				motors.twistThrottle(data.angular.z/6)
 		except Exception as e:
-			print(traceback.format_exc())
+			rospy.logerr(traceback.format_exc())
 			motors.allOff()
 			servos.allOff()
 

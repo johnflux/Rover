@@ -20,12 +20,24 @@ rover/Servo
 2. Launch ROS nodes:
 
 ```
-$ roslaunch rover drive_teleop.launch joy_dev:=/dev/input/js0
-$ roslaunch rover cmd_vel_mux.launch
-$ roslaunch rover simple_drive.launch
+~/rover/launch_gui.sh
+```
 
-OR all-in-one launch:
-$ roslaunch rover drive.launch
+This is somewhat equivalent to:
+
+```
+roslaunch rover drive.launch
+```
+
+But lets us also monitor the nodes, restart them, etc.
+
+To make this launch automatically on startup, make it a systemd service:
+
+```
+cd ~/rover
+sudo cp rover.service /lib/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl enable rover.service
 ```
 
 3. Examples:

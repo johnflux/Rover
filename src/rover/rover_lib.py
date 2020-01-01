@@ -78,12 +78,14 @@ class Motors:
 	# Only real use is to set throttle to 0 for all, or for debugging
 	def allThrottle(self, throttle):
 		self.currentAllThrottle = throttle
+		if self.currentAllThrottle == None:
+			self.currentAllThrottle = 0
 		for motor_name in self.motor_names:
 			motor = getattr(self, motor_name)
 			if not motor.arm:
 				motor.throttle = throttle
 	def allOff(self):
-		self.currentAllThrottle = None
+		self.currentAllThrottle = 0
 		for motor_name in self.motor_names:
 			motor = getattr(self, motor_name)
 			motor.throttle = None
@@ -95,6 +97,8 @@ class Motors:
 			self.arm_bottom.throttle = throttle			
 
 	def allGentleThrottle(self, throttle):
+		if self.currentAllThrottle == None:
+			self.currentAllThrottle = 0
 		step = 1 if throttle > self.currentAllThrottle else -1
 		for t in range(round(self.currentAllThrottle*10),  round(throttle*10), step):
 			self.allThrottle(t/10.0)
@@ -163,7 +167,7 @@ class Servos():
 		self.arm_updown.servomotor = self.servo.servo[0]
 		self.arm_leftright.servomotor = self.servo.servo[1]
 
-		self.right_front.zero_offset = 30
+		self.right_front.zero_offset = 90
 		self.right_back.zero_offset = 110
 		self.left_front.zero_offset = 90
 		self.left_back.zero_offset = 130
@@ -172,6 +176,10 @@ class Servos():
 		self.right_front.backwards=True
 		self.left_back.backwards=True
 
+		self.right_front.min = 60
+		self.right_front.max = 110
+		self.left_front.min = 45
+		self.left_front.max = 120
 		self.arm_leftright.max = 180
 		self.arm_leftright.min = 60
 		self.arm_updown.max = 160

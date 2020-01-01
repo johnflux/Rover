@@ -4,7 +4,7 @@ Description=Roslaunch the drive modules
 After=multi-user.target
 
 [Service]
-ExecStart=bash -c "source /home/ubuntu/catkin_ws/devel/setup.bash && roslaunch rover drive.launch"
+ExecStart="/home/ubuntu/rover/launch.sh"
 KillMode=process
 User=ubuntu
 
