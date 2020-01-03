@@ -1,12 +1,15 @@
 import React from 'react';
 import './RosNodeHealth.css';
 
-import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip } from '@material-ui/core';
-import { RosMonNode } from '../ROS_message_types';
+import { Paper, Table, TableBody, TableCell, TableHead, TableRow, Tooltip, IconButton } from '@material-ui/core';
+import StopIcon from '@material-ui/icons/Stop';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import { RosMonNode, RosmonActionEnum } from '../ROS_message_types';
 
 type RosNodeHealthProps = {
   nodes: RosMonNode[],
   websocketStatus: "Disconnected" | "Connected",
+  onStartStopRosNode: (nodeName: string, namespace: string, action: RosmonActionEnum) => (void),
 }
 
 const stateToStr = [
@@ -39,8 +42,19 @@ const RosNodeHealth: React.SFC<RosNodeHealthProps> = (props) => {
           </TableHead>
           <TableBody>
               { props.nodes.map(node =>
-                <TableRow key={node.name} className={node.state !== 1 ? 'crashed' : ''}>
-                  <TableCell>{node.ns} {node.name}</TableCell>
+                <TableRow key={node.name} className={"tablerow " + (node.state !== 1 ? 'crashed' : '')}>
+                  <TableCell>
+                    { node.state === 1 ?
+                      <IconButton className="processIconButton" key="processRebootIcon" aria-label="process-reboot" disabled={props.websocketStatus !== "Connected"} color="secondary" onClick={() => props.onStartStopRosNode(node.name, node.ns, RosmonActionEnum.STOP)} size="small">
+                        <StopIcon fontSize="small"/>
+                      </IconButton>
+                      :
+                      <IconButton className="processIconButton" key="processRebootIcon" aria-label="process-reboot" disabled={props.websocketStatus !== "Connected"} color="secondary" onClick={() => props.onStartStopRosNode(node.name, node.ns, RosmonActionEnum.START)} size="small">
+                        <PlayArrowIcon fontSize="small" htmlColor="lightgreen"/>
+                      </IconButton>
+                    }
+                    {node.ns} {node.name}
+                  </TableCell>
                   {hasRestarts && <TableCell>{node.restart_count}</TableCell>}
                   {hasStateNotRunning && <TableCell>{stateToStr[node.state]}</TableCell>}
                   <TableCell align="right">{node.memory/1024}</TableCell>

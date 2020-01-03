@@ -3,10 +3,10 @@ import './App.css';
 import Joystick from './Joystick';
 import ROSLIB from 'roslib';
 import RosNodeHealth from './RosNodeHealth/RosNodeHealth';
-import { RosMon, RosOut, SensorMsgsJoy } from './ROS_message_types';
+import { RosMon, RosOut, SensorMsgsJoy, RosmonActionEnum } from './ROS_message_types';
 import WebGamePad from './WebGamePad';
 import RosOutLog from './RosOutLog/RosOutLog';
-import { Drawer, Paper } from '@material-ui/core';
+import { Drawer, Paper, Hidden } from '@material-ui/core';
 import MySnackbar from './MySnackbar/MySnackbar';
 import OnScreenJoystick from './OnScreenJoystick/OnScreenJoystick';
 import MyAppBar from './MyAppBar/MyAppBar';
@@ -19,6 +19,7 @@ type AppState = {
   websocketStatus: "Disconnected" | "Connected",
   reconnect_count: number,
   errorMessages?: string[],
+  mobileDrawerOpen: boolean,
 }
 
 class App extends React.Component<{},AppState> {
@@ -27,6 +28,7 @@ class App extends React.Component<{},AppState> {
   sensorMsgTopic: ROSLIB.Topic;
   service_poweroff: ROSLIB.Service;
   service_reboot: ROSLIB.Service;
+  service_rosmon_startstop: ROSLIB.Service;
   constructor(props: {}) {
     super(props);
     this.state = {
@@ -37,6 +39,7 @@ class App extends React.Component<{},AppState> {
       websocketStatus: "Disconnected",
       reconnect_count: 0,
       errorMessages: undefined,
+      mobileDrawerOpen: false,
     }
     this.gamepad = new WebGamePad();
     this.gamepad.onJoystickMessage = (msg: SensorMsgsJoy) => this.handleJoystickMessage(msg);
@@ -88,6 +91,13 @@ class App extends React.Component<{},AppState> {
       this.setState({rosmon: message as RosMon});
     });
 
+    // Service to start/stop nodes: http://wiki.ros.org/rosmon
+    this.service_rosmon_startstop = new ROSLIB.Service({
+      ros : this.ros,
+      name : '/rosmon/start_stop',
+      serviceType : 'rosmon_msgs/StartStop'
+    });
+
     new ROSLIB.Topic({
       ros: this.ros,
       name: '/rosout',
@@ -114,7 +124,6 @@ class App extends React.Component<{},AppState> {
       name : '/power_off/reboot',
       serviceType : 'rover/PowerOff'
     });
-
   }
 
   handleJoystickMessage(msg: SensorMsgsJoy) {
@@ -190,32 +199,74 @@ class App extends React.Component<{},AppState> {
     }
   }
 
+  handleDrawerToggle = () => {
+    this.setState({mobileDrawerOpen: !this.state.mobileDrawerOpen});
+  }
+
+  handleStartStopRosNode = (nodeName: string, namespace: string, action: RosmonActionEnum) => {
+    this.service_rosmon_startstop.callService(new ROSLIB.ServiceRequest(
+      {
+        node: nodeName,
+        ns: namespace,
+        action: action
+      }
+    ), (response) =>
+    {
+      console.log("Rosmon start/stop response from rover was", response);
+    });
+  }
+
   render() {
+    const drawer = <div>
+      <Paper>
+        <Joystick sensor_msgs_joy={this.state.sensor_msgs_joy}/>
+      </Paper>
+      { this.state.rosmon &&
+        <RosNodeHealth
+          nodes={this.state.rosmon.nodes}
+          websocketStatus={this.state.websocketStatus}
+          onStartStopRosNode={this.handleStartStopRosNode}
+        />
+      }
+      { this.state.rosouts &&
+        <RosOutLog rosouts={this.state.rosouts} websocketStatus={this.state.websocketStatus}/>
+      }
+    </div>;
+
     return (
       <div className="App" style={{background: "url(http://" + this.state.hostname + ":8080/stream?topic=/cv_camera/image_raw&type=ros_compressed&"+this.state.reconnect_count+") no-repeat center center fixed"}}>
         <MyAppBar
           onPowerOff={this.handlePowerOffClicked}
           onPowerReboot={this.handleRebootClicked}
+          onDrawerToggle={this.handleDrawerToggle}
           hostname={this.state.hostname}
           websocketStatus={this.state.websocketStatus}
           onHostnameSubmit={this.onHostnameSubmit}
           lastMessageTimestamp={this.state.rosmon ? this.state.rosmon.header.stamp.secs : 0}
           />
-        <Drawer
-          className="rightDrawer"
-          variant="permanent"
-          anchor="right"
-          open>
-          <Paper>
-            <Joystick sensor_msgs_joy={this.state.sensor_msgs_joy}/>
-          </Paper>
-          { this.state.rosmon &&
-            <RosNodeHealth nodes={this.state.rosmon.nodes} websocketStatus={this.state.websocketStatus}/>
-          }
-          { this.state.rosouts &&
-            <RosOutLog rosouts={this.state.rosouts} websocketStatus={this.state.websocketStatus}/>
-          }
-        </Drawer>
+        {/* Note - xlUp corresponds with lgDown below, and to the max-width 1920 in OnScreenJoystick.css */}
+        <Hidden xlUp implementation="js">
+          <Drawer
+            className="rightDrawer"
+            variant="temporary"
+            anchor="right"
+            ModalProps={{
+              keepMounted: true, // Better open performance on mobile.
+            }}
+            open={this.state.mobileDrawerOpen}
+            onClose={this.handleDrawerToggle}>
+            {drawer}
+          </Drawer>
+        </Hidden>
+        <Hidden lgDown implementation="js">
+          <Drawer
+            className="rightDrawer"
+            variant="permanent"
+            anchor="right"
+            open>
+            {drawer}
+          </Drawer>
+        </Hidden>
         <OnScreenJoystick
           onMove={this.handleOnScreenJoystickMove}
           disabled={this.state.websocketStatus !== 'Connected'}

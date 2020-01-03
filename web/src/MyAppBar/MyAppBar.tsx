@@ -1,7 +1,9 @@
 import React from 'react';
-import { IconButton, Toolbar, AppBar, Typography } from '@material-ui/core';
+import { IconButton, Toolbar, AppBar, Hidden } from '@material-ui/core';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import SyncIcon from '@material-ui/icons/Sync';
+import MenuIcon from '@material-ui/icons/Menu';
+
 import WebsocketUrlInput from '../WebsocketUrlInput/WebsocketUrlInput';
 
 
@@ -12,6 +14,7 @@ type MyAppBarProps = {
     websocketStatus: "Disconnected" | "Connected",
     onHostnameSubmit: (newHostname: string) => void,
     lastMessageTimestamp: number,
+    onDrawerToggle: () => void,
 }
 
 const MyAppBar: React.SFC<MyAppBarProps> = (props) =>
@@ -31,7 +34,12 @@ const MyAppBar: React.SFC<MyAppBarProps> = (props) =>
                 onSubmit={props.onHostnameSubmit}
                 lastMessageTimestamp={props.lastMessageTimestamp}
                 />
-            <Typography variant="h6">[33:33:33]</Typography>
+            <Hidden xlUp implementation="css">
+                <IconButton edge="end" aria-label="open drawer"
+                    color="primary" onClick={props.onDrawerToggle}>
+                    <MenuIcon/>
+                </IconButton>
+            </Hidden>
         </Toolbar>
     </AppBar>;
 export default MyAppBar;

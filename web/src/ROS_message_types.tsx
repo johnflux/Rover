@@ -18,6 +18,15 @@ type Header = {
   "seq": number
 }
 
+/** As defined by rosmon_msgs/srv/StartStop.srv
+   https://github.com/xqms/rosmon/blob/master/rosmon_msgs/srv/StartStop.srv
+   */
+export enum RosmonActionEnum {
+  START = 1,
+  STOP = 2,
+  RESTART = 3
+}
+
 export type RosMon = {
   header: Header,
   nodes: RosMonNode[]

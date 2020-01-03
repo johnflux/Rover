@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactNipple from 'react-nipple';
 
-// optional: include the stylesheet somewhere in your app
-import 'react-nipple/lib/styles.css';
 import './OnScreenJoystick.css';
 
 type OnScreenJoystickProps = {
@@ -17,14 +15,14 @@ const OnScreenJoystick: React.SFC<OnScreenJoystickProps> = (props) =>
         options={{ mode: 'static', position: { top: '50%', left: '50%' }, color: 'green'}}
         // any unknown props will be passed to the container element, e.g. 'title', 'style' etc
         style={{
-            width: 150,
-            height: 150
-            // if you pass position: 'relative', you don't need to import the stylesheet
+            width: '50vw',
+            height: '50vh',
+            position: 'relative'
         }}
         // all events supported by nipplejs are available as callbacks
         // see https://github.com/yoannmoinet/nipplejs#start
         onMove={(evt:any, data:any) =>
-            props.onMove(
+            props.onMove( /* adjust x and y to -1 to 1 */
                 2*(-data.position.x + evt.target.nipples[0].position.x)/evt.target.nipples[0].options.size,
                 2*(-data.position.y + evt.target.nipples[0].position.y)/evt.target.nipples[0].options.size)}
         onEnd={() => { props.onMove(0,0)}}

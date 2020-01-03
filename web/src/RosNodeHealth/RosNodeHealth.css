@@ -15,3 +15,11 @@
 .RosNodeHealth .notconnected .MuiTableCell-root {
   color: lightcoral;
 }
+
+.tablerow .processIconButton {
+  display: none;
+}
+
+.tablerow:hover .processIconButton {
+  display: inline-block;
+}
