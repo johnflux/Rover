@@ -1,4 +1,4 @@
-#!/usr/bin/env python3 
+#!/usr/bin/env python3
 
 import sys
 if (sys.version_info < (3, 0)):
@@ -14,13 +14,13 @@ import json
 # See MotorKit code for full api of MotorKit (but there's not much to it:
 # https://github.com/adafruit/Adafruit_CircuitPython_MotorKit/blob/master/adafruit_motorkit.py
 # And for the Motor:
-# https://github.com/adafruit/Adafruit_CircuitPython_Motor/blob/master/adafruit_motor/motor.py 
+# https://github.com/adafruit/Adafruit_CircuitPython_Motor/blob/master/adafruit_motor/motor.py
 
 #TODO: Use  rospy.get_param('somekey', default)
 
 class Motor:
 	def __init__(self):
-		self.dcmotor = None
+		self.dcmotor: MotorKit = None
 		self.wired_backwards = False
 		self.arm = False
 
@@ -37,9 +37,20 @@ class Motor:
 				throttle = throttle / 2 - 0.5
 		if self.wired_backwards and throttle != None:
 			throttle = -throttle
+		if throttle != None:
+			throttle = min(1, max(-1, throttle))
 		self.dcmotor.throttle = throttle
 
 class Motors:
+	left_front: Motor
+	left_middle: Motor
+	left_back: Motor
+	right_front: Motor
+	right_middle: Motor
+	right_back: Motor
+	arm_middle: Motor
+	arm_bottom: Motor
+
 	def __init__(self):
 		# We have the equivalent of self.left_front = Motor() etc
 		self.motor_names = ['left_front', 'left_middle', 'left_back', 'right_front', 'right_middle', 'right_back', 'arm_middle', 'arm_bottom']
@@ -94,7 +105,7 @@ class Motors:
 			self.arm_middle.throttle = throttle
 
 	def armBottomThrottle(self, throttle):
-			self.arm_bottom.throttle = throttle			
+			self.arm_bottom.throttle = throttle
 
 	def allGentleThrottle(self, throttle):
 		if self.currentAllThrottle == None:
@@ -114,6 +125,9 @@ class Motors:
 		self.right_back.throttle = -throttle
 
 class Servo:
+	dcmotor: MotorKit
+	servomotor: ServoKit
+
 	def __init__(self):
 		self.servomotor = None
 		self.backwards = False
@@ -153,6 +167,13 @@ class Servo:
 			self.angle = self.zero_offset + offset
 
 class Servos():
+	right_front: Servo
+	right_back: Servo
+	left_front: Servo
+	left_back: Servo
+	arm_updown: Servo
+	arm_leftright: Servo
+
 	def __init__(self):
 		self.servo = ServoKit(channels=16)
 
@@ -193,7 +214,7 @@ class Servos():
 		self.right_back.angle=None
 		self.left_front.angle=None
 		self.left_back.angle=None
-	
+
 	def setServo(self, servo_name, offset_angle):
 		""" Set the given motor to the given offset (typically between about -60 to 60). 0 is a special case that cuts power to the servo """
 		servo = getattr(self, servo_name)
@@ -232,7 +253,7 @@ class Servos():
 		self.arm_leftright.angle = self.max_arm_leftright
 		self.rate_arm_updown = None
 		self.rate_arm_leftright = None
-	
+
 	def moveArmUp(self, amount):
 		if amount == None:
 			self.arm_updown.angle = None
