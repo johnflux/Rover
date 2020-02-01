@@ -10,6 +10,7 @@ import time
 from adafruit_motorkit import MotorKit
 from adafruit_servokit import ServoKit
 import json
+from typing import Optional
 
 # See MotorKit code for full api of MotorKit (but there's not much to it:
 # https://github.com/adafruit/Adafruit_CircuitPython_MotorKit/blob/master/adafruit_motorkit.py
@@ -20,7 +21,7 @@ import json
 
 class Motor:
 	def __init__(self):
-		self.dcmotor: MotorKit = None
+		self.dcmotor = None # type: Optional[MotorKit]
 		self.wired_backwards = False
 		self.arm = False
 
@@ -42,14 +43,14 @@ class Motor:
 		self.dcmotor.throttle = throttle
 
 class Motors:
-	left_front: Motor
-	left_middle: Motor
-	left_back: Motor
-	right_front: Motor
-	right_middle: Motor
-	right_back: Motor
-	arm_middle: Motor
-	arm_bottom: Motor
+	left_front = None  # type: Optional[Motor]
+	left_middle = None  # type: Optional[Motor]
+	left_back = None  # type: Optional[Motor]
+	right_front = None  # type: Optional[Motor]
+	right_middle = None  # type: Optional[Motor]
+	right_back = None  # type: Optional[Motor]
+	arm_middle = None  # type: Optional[Motor]
+	arm_bottom = None  # type: Optional[Motor]
 
 	def __init__(self):
 		# We have the equivalent of self.left_front = Motor() etc
@@ -125,8 +126,8 @@ class Motors:
 		self.right_back.throttle = -throttle
 
 class Servo:
-	dcmotor: MotorKit
-	servomotor: ServoKit
+	dcmotor = None # type: MotorKit
+	servomotor = None # type: ServoKit
 
 	def __init__(self):
 		self.servomotor = None
@@ -167,12 +168,12 @@ class Servo:
 			self.angle = self.zero_offset + offset
 
 class Servos():
-	right_front: Servo
-	right_back: Servo
-	left_front: Servo
-	left_back: Servo
-	arm_updown: Servo
-	arm_leftright: Servo
+	right_front = None # type: Servo
+	right_back = None # type: Servo
+	left_front = None # type: Servo
+	left_back = None # type: Servo
+	arm_updown = None # type: Servo
+	arm_leftright = None # type: Servo
 
 	def __init__(self):
 		self.servo = ServoKit(channels=16)
