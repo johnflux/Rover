@@ -174,11 +174,12 @@ class Servos():
 	left_back = None # type: Servo
 	arm_updown = None # type: Servo
 	arm_leftright = None # type: Servo
+	quadcopter_cover = None # type: Servo
 
 	def __init__(self):
 		self.servo = ServoKit(channels=16)
 
-		self.servo_names = [ 'right_front', 'right_back', 'left_front', 'left_back', 'arm_updown', 'arm_leftright' ]
+		self.servo_names = [ 'right_front', 'right_back', 'left_front', 'left_back', 'arm_updown', 'arm_leftright', 'quadcopter_cover' ]
 		for servo_name in self.servo_names:
 			setattr(self, servo_name, Servo())
 
@@ -188,12 +189,14 @@ class Servos():
 		self.left_back.servomotor = self.servo.servo[12]
 		self.arm_updown.servomotor = self.servo.servo[0]
 		self.arm_leftright.servomotor = self.servo.servo[1]
+		self.quadcopter_cover.servomotor = self.servo.servo[3]
 
 		self.right_front.zero_offset = 90
 		self.right_back.zero_offset = 110
 		self.left_front.zero_offset = 90
 		self.left_back.zero_offset = 130
 		self.arm_updown.zero_offset = 140
+		self.quadcopter_cover.zero_offset = 90
 
 		self.right_front.backwards=True
 		self.left_back.backwards=True
@@ -201,11 +204,13 @@ class Servos():
 		self.right_front.min = 60
 		self.right_front.max = 110
 		self.left_front.min = 45
-		self.left_front.max = 120
+		self.left_front.max = 160
 		self.arm_leftright.max = 180
 		self.arm_leftright.min = 60
 		self.arm_updown.max = 160
 		self.arm_updown.min = 85
+		self.quadcopter_cover.min = 90
+		self.quadcopter_cover.max = 140
 
 		self.rate_arm_updown = None
 		self.rate_arm_leftright = None
@@ -215,6 +220,7 @@ class Servos():
 		self.right_back.angle=None
 		self.left_front.angle=None
 		self.left_back.angle=None
+		self.quadcopter_cover.angle=None
 
 	def setServo(self, servo_name, offset_angle):
 		""" Set the given motor to the given offset (typically between about -60 to 60). 0 is a special case that cuts power to the servo """
@@ -238,22 +244,27 @@ class Servos():
 	def twist(self):
 		self.right_front.offset_angle = 30
 		self.right_back.offset_angle = 40
-		self.left_front.offset_angle = 35
+		self.left_front.offset_angle = 40
 		self.left_back.offset_angle = 40
 
 	def armAllTheWayUp(self):
-		self.arm_updown.angle = self.min_arm_updown
+		self.arm_updown.angle = self.arm_updown.min
 	def armStraight(self):
 		self.arm_updown.offset_angle = 0
 	def armAllTheWayDown(self):
-		self.arm_updown.angle = self.max_arm_updown
+		self.arm_updown.angle = self.arm_updown.max
 	def armHorizontalCenter(self):
-		self.arm_leftright.angle = self.min_arm_leftright
+		self.arm_leftright.angle = self.arm_leftright.min
 	def armReset(self):
 		self.armAllTheWayUp()
-		self.arm_leftright.angle = self.max_arm_leftright
+		self.arm_leftright.angle = self.arm_leftright.max
 		self.rate_arm_updown = None
 		self.rate_arm_leftright = None
+
+	def quadcopterCoverOpen(self):
+		self.quadcopter_cover.angle = self.quadcopter_cover.max
+	def quadcopterCoverClosed(self):
+		self.quadcopter_cover.angle = self.quadcopter_cover.min
 
 	def moveArmUp(self, amount):
 		if amount == None:
@@ -277,8 +288,8 @@ class Servos():
 
 	def update(self):
 		if self.rate_arm_leftright != 0 and self.rate_arm_leftright != None and self.arm_leftright.angle != None:
-			self.arm_leftright.angle = min(max(self.arm_leftright.angle + self.rate_arm_leftright, self.min_arm_leftright),self.max_arm_leftright)
+			self.arm_leftright.angle = min(max(self.arm_leftright.angle + self.rate_arm_leftright, self.arm_leftright.min),self.arm_leftright.max)
 			#print("arm leftright is now: ", self.arm_leftright.angle)
 		if self.rate_arm_updown != 0 and self.rate_arm_updown != None and self.arm_updown.angle != None:
-			self.arm_updown.angle = min(max(self.arm_updown.angle + self.rate_arm_updown, self.min_arm_updown),self.max_arm_updown)
+			self.arm_updown.angle = min(max(self.arm_updown.angle + self.rate_arm_updown, self.arm_updown.min),self.arm_updown.max)
 			#print("arm updown is now: ", self.arm_updown.angle)
