@@ -30,7 +30,7 @@ def main():
 				motors.allGentleThrottle(data.linear.x)
 				servos.allOff()
 			elif data.angular.z == 0 or data.linear.x != 0:
-				#motors.allGentleThrottle(data.linear.x)
+				motors.allGentleThrottle(data.linear.x)
 				print("Servos on")
 				servos.setTwist(0)
 			else:
