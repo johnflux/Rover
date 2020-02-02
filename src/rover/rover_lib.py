@@ -175,6 +175,8 @@ class Servos():
 	hand_updown = None # type: Servo
 	hand_leftright = None # type: Servo
 	quadcopter_cover = None # type: Servo
+	rate_hand_leftright = 0
+	rate_hand_leftright = 0
 
 	def __init__(self):
 		self.servo = ServoKit(channels=16)
