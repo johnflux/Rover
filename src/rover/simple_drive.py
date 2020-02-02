@@ -18,12 +18,12 @@ def main():
 		try:
 			print("Twist.  Forward:", data.linear.x, ", Rotate:", round(data.angular.z * 45))
 			print("arm updown:", data.linear.y, ", leftright:", data.linear.z)
-			motors.armMiddleThrottle(data.linear.y)
-			motors.armBottomThrottle(data.linear.z)
+			motors.armMiddleThrottle(data.linear.y/5)
+			motors.armBottomThrottle(data.linear.z/5)
 			if abs(data.angular.z) > abs(data.linear.x):
 				data.linear.x = 0
-			servos.handLeftRight(data.angular.x)
-			servos.handUpDown(data.angular.y)
+			servos.handLeftRight(data.angular.x*5)
+			servos.handUpDown(data.angular.y*5)
 
 			if data.angular.z == 0 and data.linear.x == 0:
 				print("Servos off")

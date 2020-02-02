@@ -126,7 +126,6 @@ class Motors:
 		self.right_back.throttle = -throttle
 
 class Servo:
-	dcmotor = None # type: MotorKit
 	servomotor = None # type: ServoKit
 
 	def __init__(self):
@@ -138,7 +137,7 @@ class Servo:
 
 	@property
 	def angle(self):
-		return self.dcmotor.angle
+		return self.servomotor.angle
 
 	@angle.setter
 	def angle(self, angle):
@@ -151,12 +150,12 @@ class Servo:
 
 	@property
 	def offset_angle(self):
-		if self.dcmotor.angle == None:
+		if self.servomotor.angle == None:
 			return 0
 		if not self.backwards:
-			return self.dcmotor.angle - self.zero_offset
+			return self.servomotor.angle - self.zero_offset
 		else:
-			return -(self.dcmotor.angle - self.zero_offset)
+			return -(self.servomotor.angle - self.zero_offset)
 
 	@offset_angle.setter
 	def offset_angle(self, offset):
@@ -176,7 +175,7 @@ class Servos():
 	hand_leftright = None # type: Servo
 	quadcopter_cover = None # type: Servo
 	rate_hand_leftright = 0
-	rate_hand_leftright = 0
+	rate_hand_updown = 0
 
 	def __init__(self):
 		self.servo = ServoKit(channels=16)
@@ -191,7 +190,7 @@ class Servos():
 		self.left_back.servomotor = self.servo.servo[12]
 		self.hand_updown.servomotor = self.servo.servo[1]
 		self.hand_leftright.servomotor = self.servo.servo[0]
-		self.quadcopter_cover.servomotor = self.servo.servo[3]
+		self.quadcopter_cover.servomotor = self.servo.servo[2]
 
 		self.right_front.zero_offset = 90
 		self.right_back.zero_offset = 110
@@ -199,7 +198,7 @@ class Servos():
 		self.left_back.zero_offset = 130
 		self.hand_updown.zero_offset = 80
 		self.hand_leftright.zero_offset = 140
-		self.quadcopter_cover.zero_offset = 90
+		self.quadcopter_cover.zero_offset = 26
 
 		self.right_front.backwards=True
 		self.left_back.backwards=True
@@ -212,15 +211,14 @@ class Servos():
 		self.hand_leftright.min = 0
 		self.hand_updown.max = 180
 		self.hand_updown.min = 80
-		self.quadcopter_cover.min = 90
-		self.quadcopter_cover.max = 70
+		self.quadcopter_cover.min = 26
+		self.quadcopter_cover.max = 140
 
 	def allOff(self):
 		self.right_front.angle=None
 		self.right_back.angle=None
 		self.left_front.angle=None
 		self.left_back.angle=None
-		self.quadcopter_cover.angle=None
 
 	def setServo(self, servo_name, offset_angle):
 		""" Set the given motor to the given offset (typically between about -60 to 60). 0 is a special case that cuts power to the servo """
