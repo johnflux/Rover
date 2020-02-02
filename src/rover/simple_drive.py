@@ -22,14 +22,8 @@ def main():
 			motors.armBottomThrottle(data.linear.z)
 			if abs(data.angular.z) > abs(data.linear.x):
 				data.linear.x = 0
-			#if data.linear.y == -2:
-			#	servos.moveArmUp(None)
-			#else:
-			#	servos.moveArmUp(-data.linear.y*10)
-			#if data.linear.z == -2:
-			#	servos.moveArmLeft(None)#
-			#else:
-			#	servos.moveArmLeft(data.linear.z*10)
+			servos.handLeftRight(data.angular.x)
+			servos.handUpDown(data.angular.y)
 
 			if data.angular.z == 0 and data.linear.x == 0:
 				print("Servos off")
@@ -42,6 +36,7 @@ def main():
 			else:
 				servos.twist()
 				motors.twistThrottle(data.angular.z/6)
+
 		except Exception as e:
 			rospy.logerr(traceback.format_exc())
 			motors.allOff()
@@ -70,11 +65,14 @@ def main():
 		servos.setServo('arm_leftright', data.arm_leftright)
 
 	def on_new_servo(data):
-		print("New servo!", data.data)
-		# data.data
+		if data.data == 1.0:
+			servos.quadcopterCoverOpen()
+		else:
+			servos.quadcopterCoverClose()
+		print("Quadcopter cover:", data.data)
 
 	subscriber_twist = rospy.Subscriber("cmd_vel", Twist, on_new_twist, queue_size=10)
-	subscriber_servo = rospy.Subscriber("servo_pos", Float32, on_new_servo, queue_size=10)
+	subscriber_servo = rospy.Subscriber("quadcopter_cover", Float32, on_new_servo, queue_size=10)
 
 	subscriber_motor_cmd = rospy.Subscriber("motor_cmd", Motor, on_new_motor_cmd, queue_size=1)
 	subscriber_servo_cmd = rospy.Subscriber("servo_cmd", Servo, on_new_servo_cmd, queue_size=1)

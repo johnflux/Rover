@@ -172,8 +172,8 @@ class Servos():
 	right_back = None # type: Servo
 	left_front = None # type: Servo
 	left_back = None # type: Servo
-	arm_updown = None # type: Servo
-	arm_leftright = None # type: Servo
+	hand_updown = None # type: Servo
+	hand_leftright = None # type: Servo
 	quadcopter_cover = None # type: Servo
 
 	def __init__(self):
@@ -187,15 +187,16 @@ class Servos():
 		self.right_back.servomotor = self.servo.servo[15]
 		self.left_front.servomotor = self.servo.servo[13]
 		self.left_back.servomotor = self.servo.servo[12]
-		self.arm_updown.servomotor = self.servo.servo[0]
-		self.arm_leftright.servomotor = self.servo.servo[1]
+		self.hand_updown.servomotor = self.servo.servo[1]
+		self.hand_leftright.servomotor = self.servo.servo[0]
 		self.quadcopter_cover.servomotor = self.servo.servo[3]
 
 		self.right_front.zero_offset = 90
 		self.right_back.zero_offset = 110
 		self.left_front.zero_offset = 90
 		self.left_back.zero_offset = 130
-		self.arm_updown.zero_offset = 140
+		self.hand_updown.zero_offset = 80
+		self.hand_leftright.zero_offset = 140
 		self.quadcopter_cover.zero_offset = 90
 
 		self.right_front.backwards=True
@@ -205,15 +206,12 @@ class Servos():
 		self.right_front.max = 110
 		self.left_front.min = 45
 		self.left_front.max = 160
-		self.arm_leftright.max = 180
-		self.arm_leftright.min = 60
-		self.arm_updown.max = 160
-		self.arm_updown.min = 85
+		self.hand_leftright.max = 180
+		self.hand_leftright.min = 0
+		self.hand_updown.max = 180
+		self.hand_updown.min = 80
 		self.quadcopter_cover.min = 90
-		self.quadcopter_cover.max = 140
-
-		self.rate_arm_updown = None
-		self.rate_arm_leftright = None
+		self.quadcopter_cover.max = 70
 
 	def allOff(self):
 		self.right_front.angle=None
@@ -230,11 +228,11 @@ class Servos():
 		else:
 			servo.offset_angle = offset_angle
 
-	def armOff(self):
-		self.arm_updown.angle=None
-		self.arm_leftright.angle=None
-		self.rate_arm_updown = None
-		self.rate_arm_leftright = None
+	def handOff(self):
+		self.hand_updown.angle=None
+		self.hand_leftright.angle=None
+		self.rate_hand_updown = 0
+		self.rate_hand_leftright = 0
 
 	def setTwist(self, offset_angle):
 		self.right_front.offset_angle=offset_angle
@@ -247,49 +245,31 @@ class Servos():
 		self.left_front.offset_angle = 40
 		self.left_back.offset_angle = 40
 
-	def armAllTheWayUp(self):
-		self.arm_updown.angle = self.arm_updown.min
-	def armStraight(self):
-		self.arm_updown.offset_angle = 0
-	def armAllTheWayDown(self):
-		self.arm_updown.angle = self.arm_updown.max
-	def armHorizontalCenter(self):
-		self.arm_leftright.angle = self.arm_leftright.min
-	def armReset(self):
-		self.armAllTheWayUp()
-		self.arm_leftright.angle = self.arm_leftright.max
-		self.rate_arm_updown = None
-		self.rate_arm_leftright = None
+	def handLeftRight(self,x):
+		if x == 0 or x is None:
+			self.rate_hand_leftright = 0
+		else:
+			self.rate_hand_leftright = x
+
+	def handUpDown(self,x):
+		if x == 0 or x is None:
+			self.rate_hand_updown = 0
+		else:
+			self.rate_hand_updown = x
 
 	def quadcopterCoverOpen(self):
 		self.quadcopter_cover.angle = self.quadcopter_cover.max
-	def quadcopterCoverClosed(self):
+	def quadcopterCoverClose(self):
 		self.quadcopter_cover.angle = self.quadcopter_cover.min
 
-	def moveArmUp(self, amount):
-		if amount == None:
-			self.arm_updown.angle = None
-			self.rate_arm_updown = None
-		elif self.arm_updown.angle != None:
-			self.rate_arm_updown = amount
-		else:
-			self.rate_arm_updown = 0
-			self.armStraight()
-
-	def moveArmLeft(self,amount):
-		if amount == None:
-			self.arm_leftright.angle = None
-			self.rate_arm_leftright = None
-		elif self.arm_leftright.angle != None:
-			self.rate_arm_leftright = amount
-		else:
-			self.rate_arm_leftright = 0
-			self.armHorizontalCenter()
-
 	def update(self):
-		if self.rate_arm_leftright != 0 and self.rate_arm_leftright != None and self.arm_leftright.angle != None:
-			self.arm_leftright.angle = min(max(self.arm_leftright.angle + self.rate_arm_leftright, self.arm_leftright.min),self.arm_leftright.max)
-			#print("arm leftright is now: ", self.arm_leftright.angle)
-		if self.rate_arm_updown != 0 and self.rate_arm_updown != None and self.arm_updown.angle != None:
-			self.arm_updown.angle = min(max(self.arm_updown.angle + self.rate_arm_updown, self.arm_updown.min),self.arm_updown.max)
-			#print("arm updown is now: ", self.arm_updown.angle)
+		if self.rate_hand_leftright != 0:
+			if self.hand_leftright.angle == None:
+				self.hand_leftright.angle = self.hand_leftright.zero_offset
+			else:
+				self.hand_leftright.angle += self.rate_hand_leftright
+		if self.rate_hand_updown != 0:
+			if self.hand_updown.angle == None:
+				self.hand_updown.angle = self.hand_updown.zero_offset
+			else:
+				self.hand_updown.angle += self.rate_hand_updown
