@@ -179,7 +179,7 @@ class Servos():
 	def __init__(self):
 		self.servo = ServoKit(channels=16)
 
-		self.servo_names = [ 'right_front', 'right_back', 'left_front', 'left_back', 'arm_updown', 'arm_leftright', 'quadcopter_cover' ]
+		self.servo_names = [ 'right_front', 'right_back', 'left_front', 'left_back', 'hand_updown', 'hand_leftright', 'quadcopter_cover' ]
 		for servo_name in self.servo_names:
 			setattr(self, servo_name, Servo())
 
