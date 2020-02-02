@@ -217,6 +217,15 @@ class App extends React.Component<{},AppState> {
   }
 
   render() {
+    let camera_running = false;
+    if (this.state.rosmon) {
+      this.state.rosmon.nodes.forEach(node => {
+        if (node.name === "cv_camera") {
+          camera_running = node.state === 1;
+        }
+      });
+      //console.log(this.state.rosmon.nodes);
+    }
     const drawer = <div>
       <Paper>
         <Joystick sensor_msgs_joy={this.state.sensor_msgs_joy}/>
@@ -233,8 +242,13 @@ class App extends React.Component<{},AppState> {
       }
     </div>;
 
+    let cameraUrl = "";
+    if (camera_running) {
+      cameraUrl = "http://" + this.state.hostname + ":8080/stream?topic=/cv_camera/image_raw&type=ros_compressed&"+this.state.reconnect_count;
+    }
+
     return (
-      <div className="App" style={{background: "url(http://" + this.state.hostname + ":8080/stream?topic=/cv_camera/image_raw&type=ros_compressed&"+this.state.reconnect_count+") no-repeat center center fixed"}}>
+      <div className="App" style={{background: "url(" + cameraUrl + ") no-repeat center center fixed"}}>
         <MyAppBar
           onPowerOff={this.handlePowerOffClicked}
           onPowerReboot={this.handleRebootClicked}
