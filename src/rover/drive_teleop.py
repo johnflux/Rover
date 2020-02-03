@@ -32,8 +32,8 @@ class DriveTeleop:
         linear_vel = data.axes[4] / self.speed_setting # right stick forward/back
         angular_vel = -data.axes[3] # right stick left/right (rad/s)
 
-        arm_leftright = data.axes[0] # horiz
-        arm_updown = data.axes[1] # vert
+        arm_leftright = data.axes[0] / self.speed_setting # horiz
+        arm_updown = data.axes[1] / self.speed_setting # vert
 
         hand_leftright = data.axes[6]
         hand_updown = data.axes[7]

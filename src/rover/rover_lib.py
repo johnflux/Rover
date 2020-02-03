@@ -259,8 +259,13 @@ class Servos():
 
 	def quadcopterCoverOpen(self):
 		self.quadcopter_cover.angle = self.quadcopter_cover.max
+		time.sleep(0.3)
+		self.quadcopter_cover.angle = None
 	def quadcopterCoverClose(self):
 		self.quadcopter_cover.angle = self.quadcopter_cover.min
+		time.sleep(0.3)
+		self.quadcopter_cover.angle = None
+
 
 	def update(self):
 		if self.rate_hand_leftright != 0:
