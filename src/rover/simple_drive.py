@@ -81,7 +81,7 @@ def main():
             servos.quadcopterCoverClose()
         print("Quadcopter cover:", data.data)
 
-    def on_new_joy(self, data):
+    def on_new_joy(data):
         global quadcopter_cover
         # Buttons:
         #   A=0
