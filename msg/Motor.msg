@@ -1,4 +1,7 @@
 # Each value is between -100 to 100.  0 is a special case that cuts power to the power
+# If you modify this file, you need to rebuild:
+# cd ~/catkin_ws
+# catkin_build
 int8 left_front
 int8 left_middle
 int8 left_back
