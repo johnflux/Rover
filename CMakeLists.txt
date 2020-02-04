@@ -35,7 +35,7 @@ catkin_package(
 )
 
 catkin_install_python(
-  PROGRAMS nodes/simple_drive nodes/drive_teleop nodes/cmd_vel_mux nodes/power_service
+  PROGRAMS nodes/simple_drive nodes/power_service
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
