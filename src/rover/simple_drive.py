@@ -93,9 +93,12 @@ def main():
         if data.buttons[1]:
             speed_setting = 1
 
-        print(data.buttons)
-        if data.buttons[7]:
-            rospy.ServiceProxy('power_off/power_off', PowerOff)()
+        if data.buttons[8]:
+            rospy.loginfo("Joystick power button pressed - shutting down")
+            try:
+                rospy.ServiceProxy('power_off/power_off', PowerOff)()
+            except rospy.ServiceException, e:
+                rospy.logerr("Failed to poweroff:" + traceback.format_exc())
             return
 
         # Drive sticks
