@@ -1,8 +1,6 @@
 <launch>
   <!-- Joystick Input Node -->
-  <include file="$(find rover)/launch/drive_teleop.launch"/>
-  <!-- Multiplex Motor Commands Node -->
-  <include file="$(find rover)/launch/cmd_vel_mux.launch"/>
+  <include file="$(find rover)/launch/joy.launch"/>
   <!-- Simple Drive Node -->
   <include file="$(find rover)/launch/simple_drive.launch"/>
   <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
