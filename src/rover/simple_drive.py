@@ -7,6 +7,7 @@ import rospy
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Float32
 from rover.msg import Motor, Servo
+from rover.srv import PowerOff
 from sensor_msgs.msg import Joy
 
 def main():
@@ -91,6 +92,11 @@ def main():
         speed_setting = 2
         if data.buttons[1]:
             speed_setting = 1
+
+        print(data.buttons)
+        if data.buttons[7]:
+            rospy.ServiceProxy('power_off/power_off', PowerOff)()
+            return
 
         # Drive sticks
         linear_vel = data.axes[4] / speed_setting # right stick forward/back
