@@ -7,7 +7,7 @@ e.g. `~/catkin_ws/src/rover/`
 1. Building
 
         cd ~/catkin_ws
-        catkin_build
+        catkin_make
 
     To test, do:
 
