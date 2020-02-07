@@ -4,6 +4,7 @@ from termcolor import colored
 
 from rosmon_msgs.msg import State
 import os
+import rpi_throttled_status
 
 def main():
     rospy.init_node("print_status")
@@ -13,8 +14,14 @@ def main():
         for node in state.nodes:
             print(colored((node.ns + ' ' + node.name).ljust(15),'cyan', attrs=['bold']), '\t', state_to_str[node.state], "\tUser:", str(round(100*node.user_load))+'%', "\tSys:", str(round(100*node.system_load))+'%', "  \tMem:", round(node.memory/1024),'kb')
 
-    state = rospy.wait_for_message("/rosmon/state", State, 2)
-    on_new_state(state)
+    try:
+        state = rospy.wait_for_message("/rosmon/state", State, 2)
+        on_new_state(state)
+    except:
+        print(colored('Timeout waiting for rosmon.  Note that the raspberry pi can take a minute to fully start up.', "red"))
+        print(colored("Running: 'service rover status':", attrs=['bold']))
+        os.system("service rover status")
+
     print()
 
     print("You can start (1), stop (2), or restart (3) services like:")
@@ -27,5 +34,7 @@ def main():
     print("\x1B[95m")
     os.system("screen -ls")
     print("\x1B[0m")
+
+    rpi_throttled_status.printThrottledStatus()
 
 main()

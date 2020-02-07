@@ -97,7 +97,7 @@ def main():
             rospy.loginfo("Joystick power button pressed - shutting down")
             try:
                 rospy.ServiceProxy('power_off/power_off', PowerOff)()
-            except rospy.ServiceException, e:
+            except rospy.ServiceException as e:
                 rospy.logerr("Failed to poweroff:" + traceback.format_exc())
             return
 
