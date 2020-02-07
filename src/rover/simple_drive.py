@@ -10,7 +10,10 @@ from rover.msg import Motor, Servo
 from rover.srv import PowerOff
 from sensor_msgs.msg import Joy
 
+from . import serial_write
+
 def main():
+    serial_write.send_ip()
     rospy.init_node("simple_drive")
     motors = Motors()
     servos = Servos()

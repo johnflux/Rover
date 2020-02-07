@@ -1,13 +1,13 @@
 # Copy to /lib/systemd/system
 [Unit]
 Description=Roslaunch the drive modules
-After=multi-user.target
 
 [Service]
 ExecStart="/home/ubuntu/rover/launch.sh"
 KillMode=process
 User=ubuntu
+Type=forking
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
 
