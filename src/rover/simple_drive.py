@@ -9,17 +9,16 @@ from std_msgs.msg import Float32
 from rover.msg import Motor, Servo
 from rover.srv import PowerOff
 from sensor_msgs.msg import Joy
-
-from . import serial_write
+import os
 
 def main():
-    serial_write.send_ip()
     rospy.init_node("simple_drive")
     motors = Motors()
     servos = Servos()
     rate = rospy.Rate(10) # 10hz
 
     quadcopter_cover = 0 # Default to closed
+    servos.quadcopterCoverClose()
 
     def on_new_twist_body(data):
         try:
@@ -132,12 +131,17 @@ def main():
             #quadcopter_cover_pub.publish( 1.0 if quadcopter_cover else 0.0 )
             on_new_quadcopter_cover(quadcopter_cover_value)
 
+    def on_display_ip_on_leds():
+        os.system("~/rover/src/rover/serial_write.py")
+
     subscriber_twist = rospy.Subscriber("cmd_vel", Twist, on_new_twist_body, queue_size=10)
     subscriber_servo = rospy.Subscriber("quadcopter_cover", Float32, on_new_quadcopter_cover, queue_size=10)
     subscriber_joystock = rospy.Subscriber("joy", Joy, on_new_joy, queue_size=1)
 
     subscriber_motor_cmd = rospy.Subscriber("motor_cmd", Motor, on_new_raw_motor, queue_size=1)
     subscriber_servo_cmd = rospy.Subscriber("servo_cmd", Servo, on_new_raw_servo, queue_size=1)
+
+    on_display_ip_on_leds()
 
     while not rospy.is_shutdown():
         servos.update()

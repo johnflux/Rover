@@ -20,7 +20,7 @@ def send_ip():
     ip = get_ip()
     print("Ip is", ip)
     ser = serial.Serial('/dev/ttyUSB0', 115200, rtscts=False, dsrdtr=True, xonxoff=False)  # open serial port
-    time.sleep(1)
+    time.sleep(3)
     ser.readline()
     ret = ser.write(ip.encode('ascii'))     # write a string
     ser.flush()
