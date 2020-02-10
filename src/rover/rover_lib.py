@@ -192,7 +192,7 @@ class Servos():
 		self.hand_leftright.servomotor = self.servo.servo[0]
 		self.quadcopter_cover.servomotor = self.servo.servo[2]
 
-		self.right_front.zero_offset = 90
+		self.right_front.zero_offset = 105
 		self.right_back.zero_offset = 110
 		self.left_front.zero_offset = 90
 		self.left_back.zero_offset = 80
@@ -242,7 +242,7 @@ class Servos():
 		self.left_front.offset_angle=offset_angle
 		self.left_back.offset_angle=offset_angle
 	def twist(self):
-		self.right_front.offset_angle = 30
+		self.right_front.offset_angle = 40
 		self.right_back.offset_angle = 40
 		self.left_front.offset_angle = 40
 		self.left_back.offset_angle = 40
