@@ -195,7 +195,7 @@ class Servos():
 		self.right_front.zero_offset = 90
 		self.right_back.zero_offset = 110
 		self.left_front.zero_offset = 90
-		self.left_back.zero_offset = 130
+		self.left_back.zero_offset = 80
 		self.hand_updown.zero_offset = 80
 		self.hand_leftright.zero_offset = 140
 		self.quadcopter_cover.zero_offset = 26
@@ -207,6 +207,8 @@ class Servos():
 		self.right_front.max = 110
 		self.left_front.min = 45
 		self.left_front.max = 160
+		self.left_back.min = 20
+		self.left_back.max = 120
 		self.hand_leftright.max = 180
 		self.hand_leftright.min = 0
 		self.hand_updown.max = 180

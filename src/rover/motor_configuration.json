@@ -20,7 +20,7 @@
 	"left_back": {
 		"left_controller": true,
 		"controller_motor_number": 4,
-		"wired_backwards": true,
+		"wired_backwards": false,
 		"arm": false
 	},
 	"right_front": {
