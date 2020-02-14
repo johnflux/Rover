@@ -89,7 +89,7 @@ def main():
         print("Quadcopter cover:", data.data)
 
     def on_new_joy(data):
-        global quadcopter_cover
+        nonlocal quadcopter_cover
         # Buttons:
         #   A=0
         #   B=1  - Increase speed
@@ -132,9 +132,11 @@ def main():
         # Quadcopter servo
         if data.buttons[2]: # Toggle quadcopter cover
             quadcopter_cover = not quadcopter_cover
-            quadcopter_cover_value = 1.0 if quadcopter_cover else 0.0
+            if quadcopter_cover:
+                servos.quadcopterCoverOpen()
+            else:
+                servos.quadcopterCoverClose()
             #quadcopter_cover_pub.publish( 1.0 if quadcopter_cover else 0.0 )
-            on_new_quadcopter_cover(quadcopter_cover_value)
         if data.buttons[0]:
             on_display_ip_on_leds()
 
@@ -142,8 +144,8 @@ def main():
         os.system("~/rover/src/rover/serial_write.py")
         rospy.loginfo("IP Address is " + serial_write.get_ip())
 
-    subscriber_twist = rospy.Subscriber("cmd_vel", Twist, on_new_twist_body, queue_size=10)
-    subscriber_servo = rospy.Subscriber("quadcopter_cover", Float32, on_new_quadcopter_cover, queue_size=10)
+    subscriber_twist = rospy.Subscriber("cmd_vel", Twist, on_new_twist_body, queue_size=1)
+    subscriber_servo = rospy.Subscriber("quadcopter_cover", Float32, on_new_quadcopter_cover, queue_size=1)
     subscriber_joystock = rospy.Subscriber("joy", Joy, on_new_joy, queue_size=1)
 
     subscriber_motor_cmd = rospy.Subscriber("motor_cmd", Motor, on_new_raw_motor, queue_size=1)
